@@ -10,10 +10,7 @@
 #include "GL_framework.h"
 
 int w, h; //variables donde guardamos la witdh y la height
-float FOV_Augment=0.0f; //coeficiente que aumentara nuestro fov
-int Do_Once = 0; //variable que controla nuestro dolly effect
-clock_t  TimerDolly = 0.f; //tiempo de nuestro dolly effect
-float RotationTimer = 0.0f; //tiempo que controla la rotacion de la camara
+
 
 
 ///////// fw decl
@@ -42,6 +39,16 @@ namespace Cube {
 	glm::vec4 myColor = { 0.0f, 0.3f, 1.4f, 1.0f };
 }
 
+namespace MyFirstShader {
+	void myInitCode(void);
+	GLuint myShaderCompile(void);
+
+	void myCleanupCode(void);
+	void myRenderCode(double currentTime);
+
+	GLuint myRenderProgram;
+	GLuint myVAO;
+}
 
 
 namespace RenderVars {
@@ -82,17 +89,20 @@ void myInitCode(int width, int height) {
 	w = width;//inicializamos nuestras variables witdh y height a sus valores correspondientes
 	h = height;
 
-	Box::setupCube();
-	Axis::setupAxis();
-	Cube::setupCube();
-	Cube::setupCube();
+	//Box::setupCube();
+	//Axis::setupAxis();
+	//Cube::setupCube();
+	//Cube::setupCube();
+
+	MyFirstShader::myInitCode();
 }
 
 void myCleanupCode() {
-	Box::cleanupCube();
-	Axis::cleanupAxis();
-	Cube::cleanupCube();
-	Cube::cleanupCube();
+	//Box::cleanupCube();
+	//Axis::cleanupAxis();
+	//Cube::cleanupCube();
+	//Cube::cleanupCube();
+	MyFirstShader::myCleanupCode();
 }
 
 void myRenderCode(double currentTime) 
@@ -110,9 +120,10 @@ void myRenderCode(double currentTime)
 
 
 	// render code
-	Box::drawCube();
-	Axis::drawAxis();
+	//Box::drawCube();
+	//Axis::drawAxis();
 
+	MyFirstShader::myRenderCode(currentTime);
 
 	ImGui::Render();
 }
@@ -147,6 +158,419 @@ void linkProgram(GLuint program) {
 		delete[] buff;
 	}
 }
+
+namespace MyFirstShader {
+	void myCleanupCode() {
+		glDeleteVertexArrays(1, &myVAO);
+		glDeleteProgram(myRenderProgram);
+	}
+
+
+	//EX0.2
+
+	GLuint myShaderCompile(void) {
+		static const GLchar * vertex_shader_source[] =
+		{
+			"#version 330										\n\
+		\n\
+		void main() {\n\
+		const vec4 vertices[4] = vec4[4](vec4( 0.25, -0.25, 0.5, 1.0),\n\
+									   vec4(0.25, 0.25, 0.5, 1.0),\n\
+										vec4( -0.25,  0.25, 0.5, 1.0),\n\
+										vec4( -0.25,  -0.25, 0.5, 1.0));\n\
+		gl_Position = vertices[gl_VertexID];\n\
+		}"
+		};
+		/*
+		static const GLchar * geom_shader_source[] =
+		{ "#version 330\n\
+		layout(triangles) in;\n\
+		layout(triangle_strip, max_vertices = 9) out;\n\
+		const vec4 myGeomVertices[3] = vec4[3](vec4( 0.25, -0.25, 0.5, 1.0),\n\
+		vec4(0.25, 0.25, 0.5, 1.0),\n\
+		vec4( -0.5,  -0.5, 0.5, 1.0));\n\
+		void main()\n\
+		{\n\
+		for (int i = 0; i<3; i++)\n\
+		{\n\
+		gl_Position = gl_in[0].gl_Position+myGeomVertices[i];\n\
+		EmitVertex();\n\
+		}\n\
+		EndPrimitive();\n\
+		}" };
+		*/
+
+
+		/*this should just duplibcate the geometry
+		static const GLchar * geom_shader_source[] =
+		{ "#version 330\n\
+		layout(triangles) in;\n\
+		layout(triangle_strip, max_vertices = 6) out;\n\
+		vec4 offset = vec4( 1.0, -0.25, 0.5, 1.0); \n\
+		void main()\n\
+		{\n\
+		for (int i = 0; i<3; i++)\n\
+		{\n\
+		gl_Position = gl_in[i].gl_Position;\n\
+		EmitVertex();\n\
+		}\n\
+		EndPrimitive();\n\
+		for (i = 0; i<3; i++)\n\
+		{\n\
+		gl_Position = gl_in[i].gl_Position + offset;\n\
+		EmitVertex();\n\
+		}\n\
+		EndPrimitive();\n\
+		}" };*/
+
+		/*	static const GLchar * geom_shader_source[] =
+		{ "#version 330\n\
+		uniform float time;\n\
+		layout(triangles) in;\n\
+		layout(triangle_strip, max_vertices = 6) out;\n\
+		void main()\n\
+		{\n\
+		vec4 offset = vec4(0.5-sin(time),0.5,0.0,0.0); \n\
+		for (int i = 0; i<3; i++)\n\
+		{\n\
+		gl_Position = gl_in[i].gl_Position+offset;\n\
+		EmitVertex();\n\
+		}\n\
+		EndPrimitive();\n\
+		for (int i = 0; i<3; i++)\n\
+		{\n\
+		gl_Position = gl_in[i].gl_Position - offset;\n\
+		EmitVertex();\n\
+		}\n\
+		EndPrimitive();\n\
+		}"
+		};*/
+
+		/*	static const GLchar * geom_shader_source[] =
+		{   "#version 330 \n\
+		layout(triangles) in;\n\
+		layout(triangle_strip, max_vertices = 3) out;\n\
+		void main()\n\
+		{\n\
+		const vec4 vertices[3] = vec4[3](vec4(0.25,-0.25,0.5,1.0),\n\
+		vec4(0.25, 0.25, 0.5, 1),\n\
+		vec4(-0.25, -0.25, 0.5, 1)); \n\
+		for (int i = 0; i<3; i++)\n\
+		{\n\
+		gl_Position = vertices[i] + gl_in[0].gl_Position;\n\
+		EmitVertex();\n\
+		}\n\
+		EndPrimitive();\n\
+		}"
+		};*/
+
+		//static const GLchar * geom_shader_source[] = //max_vertices te guarda el numero maximo de vertices en memoria
+		//											//uniform hace que el valor sea el mismo para todos los momentos del shader
+		//											//puedes pasarle parametros que calcules en otro shader usando output es lo opuesto a las uniform
+		//{ "#version 330															 \n\
+				//	uniform float time;													 \n\
+		//	layout(triangles) in;												 \n\
+		//	layout(triangle_strip, max_vertices = 4) out;						 \n\
+		//	vec4 vertices[4] = vec4[4](vec4(0.25*cos(time), -0.25, 0.25*sin(time), 1.0),	 \n\
+		//			vec4(0.25*cos(time), 0.25, 0.25*sin(time), 1.0),			 \n\
+		//			vec4(-0.25*cos(time),  -0.25, 0.25*sin(time), 1.0),			 \n\
+		//			vec4(-0.25*cos(time),  0.25, 0.25*sin(time), 1.0));			 \n\
+		//	void main() {														 \n\
+		//		for (int i = 0; i < 4; i++) {								   	 \n\
+		//				gl_Position = vertices[i] + gl_in[0].gl_Position;		 \n\
+		//				EmitVertex();											 \n\
+		//		}																 \n\
+		//			EndPrimitive();												 \n\
+		//}" };
+
+////exercise 7: make the cube face rotate (with trigonometry)
+//static const GLchar * geom_shader_source[] =
+//{
+//	"#version 330																		    \n\
+		//		uniform float time;																	\n\
+		//		layout(triangles) in;																\n\
+		//		layout(triangle_strip, max_vertices = 4) out;										\n\
+		//		vec4 vertices[4] = vec4[4](vec4(0.25*cos(time) , -0.25, 0.25*sin(time), 1.0),		\n\
+		//								 vec4(0.25*cos(time)  , 0.25, 0.25*sin(time), 1.0),			\n\
+		//								 vec4(-0.25*cos(time)  , -0.25, 0.25*sin(time), 1.0),		\n\
+		//								 vec4(-0.25*cos(time)  , 0.25, 0.25*sin(time), 1.0));		\n\
+		//																							\n\
+		//		void main()																			\n\
+		//		{																					\n\
+		//			for(int i= 0; i<4; i++){														\n\
+		//				gl_Position = gl_in[0].gl_Position  + vertices[i];							\n\
+		//				EmitVertex();																\n\
+		//			}																				\n\
+		//			EndPrimitive();																	\n\
+		//		}"
+//};
+//the fragment shader considers gl_PrimitiveID:
+
+		static const GLchar * fragment_shader_source[] =
+		{
+			"#version 330\n\
+			\n\
+			out vec4 color;\n\
+			\n\
+			void main() {\n\
+			const vec4 colors[6] = vec4[6](vec4( 0, 1, 0, 1.0),\n\
+											vec4(0.25, 0.25, 0.5, 1.0),\n\
+											vec4( 1, 0.25, 0.5, 1.0),\n\
+											vec4(0.25, 0, 0, 1.0),\n\
+											vec4( 1, 0, 0, 1.0),\n\
+											vec4( 0.25, 0.25, 0.5, 1.0));\n\
+			color = colors[gl_PrimitiveID ];\n\
+			}" };
+
+
+
+		//in the geometry shader notice how gl_PrimitiveID is assigned before emitting each vertex
+
+		static const GLchar * geom_shader_source[] = {
+			"#version 330 \n\
+			uniform mat4 rotation;\n\
+			layout(triangles) in;\n\
+			layout(triangle_strip, max_vertices = 24) out;\n\
+			void main()\n\
+			{\n\
+				const vec4 vertices[4] = vec4[4](vec4(0.25, -0.25, 0.25, 1.0),\n\
+										vec4(0.25, 0.25, 0.25, 1.0),\n\
+										vec4(-0.25, -0.25, 0.25, 1.0),\n\
+										vec4(-0.25, 0.25, 0.25, 1.0));\n\
+				\n\
+				//CARA 1\n\
+				for (int i = 0; i<4; i++)\n\
+				{\n\
+					gl_Position = rotation*vertices[i]+gl_in[0].gl_Position;\n\
+					gl_PrimitiveID = 0;\n\
+					EmitVertex();\n\
+				}\n\
+				EndPrimitive();\n\
+				\n\
+				//CARA 2\n\
+				const vec4 vertices2[4]= vec4[4](vec4(0.25, 0.25, 0.25, 1.0),\n\
+										vec4(0.25, 0.25, -0.25, 1.0),\n\
+										vec4(-0.25, 0.25, 0.25, 1.0),\n\
+										vec4(-0.25, 0.25, -0.25, 1.0));\n\
+				for (int i = 0; i<4; i++)\n\
+				{\n\
+					gl_Position = rotation*vertices2[i]+gl_in[0].gl_Position;\n\
+gl_PrimitiveID = 1;\n\
+					EmitVertex();\n\
+				}\n\
+				EndPrimitive();\n\
+				//CARA 3\n\
+				const vec4 vertices3[4]= vec4[4](vec4(-0.25, -0.25, 0.25, 1.0),\n\
+										vec4(-0.25, 0.25, 0.25, 1.0),\n\
+										vec4(-0.25, -0.25, -0.25, 1.0),\n\
+										vec4(-0.25, 0.25, -0.25, 1.0));\n\
+				for (int i = 0; i<4; i++)\n\
+				{\n\
+					gl_Position = rotation*vertices3[i]+gl_in[0].gl_Position;\n\
+gl_PrimitiveID = 2;\n\
+					EmitVertex();\n\
+				}\n\
+				EndPrimitive();\n\
+				//CARA 4\n\
+				const vec4 vertices4[4]= vec4[4](vec4(-0.25, -0.25, -0.25, 1.0),\n\
+										vec4(-0.25, 0.25, -0.25, 1.0),\n\
+										vec4(0.25, -0.25, -0.25, 1.0),\n\
+										vec4(0.25, 0.25, -0.25, 1.0));\n\
+				for (int i = 0; i<4; i++)\n\
+				{\n\
+					gl_Position = rotation*vertices4[i]+gl_in[0].gl_Position;\n\
+gl_PrimitiveID = 3;\n\
+					EmitVertex();\n\
+				}\n\
+				EndPrimitive();\n\
+				//CARA 5\n\
+				const vec4 vertices5[4]= vec4[4](vec4(-0.25, -0.25, 0.25, 1.0),\n\
+										vec4(-0.25, -0.25, -0.25, 1.0),\n\
+										vec4(0.25, -0.25, 0.25, 1.0),\n\
+										vec4(0.25, -0.25, -0.25, 1.0));\n\
+				for (int i = 0; i<4; i++)\n\
+				{\n\
+					gl_Position = rotation*vertices5[i]+gl_in[0].gl_Position;\n\
+gl_PrimitiveID = 4;\n\
+					EmitVertex();\n\
+				}\n\
+				EndPrimitive();\n\
+				//CARA 6\n\
+				const vec4 vertices6[4]= vec4[4](vec4(0.25, -0.25, -0.25, 1.0),\n\
+										vec4(0.25, 0.25, -0.25, 1.0),\n\
+										vec4(0.25, -0.25, 0.25, 1.0),\n\
+										vec4(0.25, 0.25, 0.25, 1.0));\n\
+				for (int i = 0; i<4; i++)\n\
+				{\n\
+					gl_Position = rotation*vertices6[i]+gl_in[0].gl_Position;\n\
+gl_PrimitiveID = 5;\n\
+					EmitVertex();\n\
+				}\n\
+				EndPrimitive();\n\
+			}"
+		};
+
+		//
+		//		static const GLchar * fragment_shader_source[] =
+		//		{
+		//			"#version 330\n\
+		//		\n\
+//		out vec4 color;\n\
+//		\n\
+//		void main() {\n\
+//		const vec4 colors[6] = vec4[6] (vec4(1.0, 1.0, 1.0, 1.0),\n\
+//									vec4(1.0, 1.0, 1.0, 1.0),\n\
+//									vec4(1.0, 1.0, 1.0, 1.0),\n\
+//									vec4(1.0, 1.0, 1.0, 1.0),\n\
+//									vec4(1.0, 1.0, 1.0, 1.0),\n\
+//									vec4(1.0, 1.0, 1.0, 1.0),\n\
+//color=colors[gl_PrimitiveID];\n\
+//		}"
+//		};
+
+
+
+
+		GLuint vertex_shader;
+		GLuint fragment_shader;
+		GLuint geom_shader;
+		GLuint program;
+
+		vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+		glCompileShader(vertex_shader);
+
+		geom_shader = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(geom_shader, 1, geom_shader_source, NULL);
+		glCompileShader(geom_shader);
+
+		fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+		glCompileShader(fragment_shader);
+
+		program = glCreateProgram();
+		glAttachShader(program, vertex_shader);
+		glAttachShader(program, fragment_shader);
+		glAttachShader(program, geom_shader);
+		glLinkProgram(program);
+
+		glDeleteShader(vertex_shader);
+		glDeleteShader(fragment_shader);
+
+		return program;
+	}
+
+
+	//EX0 (with an attempt to pass a variable)
+	/*
+	GLuint myShaderCompile(void) {
+	static const GLchar * vertex_shader_source[] =
+	{
+	"#version 330										\n\
+	\n\
+	in float time;\n\
+	void main() {\n\
+	const vec4 vertices[3] = vec4[3](vec4( 0.25, -0.25, 0.5, 1.0+1/1000),\n\
+	vec4(0.25, 0.25, 0.5, 1.0),\n\
+	vec4( -0.25,  -0.25, 0.5, 1.0));\n\
+	gl_Position = vertices[gl_VertexID]+time/1000;\n\
+	}"
+	};
+
+	static const GLchar * geom_shader_source[] =
+	{ "#version 330\n\
+	layout(triangles) in;\n\
+	layout(triangle_strip, max_vertices = 3) out;\n\
+	void main()\n\
+	{\n\
+	for (int i = 0; i<3; i++)\n\
+	{\n\
+	gl_Position = gl_in[i].gl_Position+vec4(0.5,0.5,0.0,0.0);\n\
+	EmitVertex();\n\
+	}\n\
+	EndPrimitive();\n\
+	}" };
+
+
+	static const GLchar * fragment_shader_source[] =
+	{
+	"#version 330\n\
+	\n\
+	out vec4 color;\n\
+	\n\
+	void main() {\n\
+	color = vec4(0.0,0.8,1.0,1.0);\n\
+	}"
+	};
+
+
+
+
+	GLuint vertex_shader;
+	GLuint fragment_shader;
+	GLuint geom_shader;
+	GLuint program;
+
+	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+	glCompileShader(vertex_shader);
+
+	geom_shader = glCreateShader(GL_GEOMETRY_SHADER);
+	glShaderSource(geom_shader, 1, geom_shader_source, NULL);
+	glCompileShader(geom_shader);
+
+	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+	glCompileShader(fragment_shader);
+
+	program = glCreateProgram();
+	glAttachShader(program, vertex_shader);
+	glAttachShader(program, fragment_shader);
+	glAttachShader(program, geom_shader);
+	glLinkProgram(program);
+
+	glDeleteShader(vertex_shader);
+	glDeleteShader(fragment_shader);
+
+	return program;
+	}
+
+	*/
+
+
+
+
+	void  myInitCode(void) {
+
+		myRenderProgram = myShaderCompile();
+		glCreateVertexArrays(1, &myVAO);
+		glBindVertexArray(myVAO);
+
+
+	}
+
+
+	void myRenderCode(double currentTime) {
+		//glUseProgram(myRenderProgram);
+		////glUniform1f(glGetUniformLocation(myRenderProgram, "time"), (GLfloat) currentTime);
+		//glm::mat4 rotation = { cos(currentTime), 0.f, -sin(currentTime), 0.f,
+		//	0.f, 1.f, 0.f, 0.f,
+		//	sin(currentTime), 0.f, cos(currentTime), 0.f,
+		//	0.f, 0.f, 0.f, 1.f };
+		//glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(RV::_MVP)); //asi controlas la camara dentro
+		//glDrawArrays(GL_TRIANGLES, 0, 4);
+
+		glUseProgram(myRenderProgram);
+		glm::mat4 rotation = { cos(currentTime), 0.f, -sin(currentTime), 0.f,
+			0.f, 1.f, 0.f, 0.f,
+			sin(currentTime), 0.f, cos(currentTime), 0.f,
+			0.f, 0.f, 0.f, 1.f };
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	}
+}
+
 
 ////////////////////////////////////////////////// BOX
 namespace Box {
