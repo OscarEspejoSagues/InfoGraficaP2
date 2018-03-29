@@ -44,7 +44,7 @@ namespace MyFirstShader {
 	GLuint myShaderCompile(void);
 
 	void myCleanupCode(void);
-	void myRenderCode(double currentTime);
+	void myRenderCode(double currentTime, glm::vec4 position);
 
 	GLuint myRenderProgram;
 	GLuint myVAO;
@@ -122,9 +122,20 @@ void myRenderCode(double currentTime)
 	// render code
 	//Box::drawCube();
 	//Axis::drawAxis();
-
-	MyFirstShader::myRenderCode(currentTime);
-
+	glm::vec4 position = { 10.f, 10.f,10.f, 1.f };
+	MyFirstShader::myRenderCode(currentTime, position);
+	glm::vec4 position1 = { -10.f, 10.f,10.f, 1.f };
+	MyFirstShader::myRenderCode(currentTime, position1);
+	glm::vec4 position2 = { 5.f, 5.f,5.f, 1.f };
+	MyFirstShader::myRenderCode(currentTime, position2);
+	glm::vec4 position3 = { -5.f, 5.f,5.f, 1.f };
+	MyFirstShader::myRenderCode(currentTime, position3);
+	glm::vec4 position4 = { 0.f, 0.f,0.f, 1.f };
+	MyFirstShader::myRenderCode(currentTime, position4);
+	glm::vec4 position5 = { 1.f, 1.f,1.f, 1.f };
+	MyFirstShader::myRenderCode(currentTime, position5);
+	glm::vec4 position6 = { -1.f, 1.f,1.f, 1.f };
+	MyFirstShader::myRenderCode(currentTime, position6);
 	ImGui::Render();
 }
 
@@ -326,14 +337,13 @@ namespace MyFirstShader {
 	}
 
 
-	void myRenderCode(double currentTime) {
+	void myRenderCode(double currentTime, glm::vec4 position) {
 		glUseProgram(myRenderProgram);
 		glm::mat4 rotation = { cos(currentTime), 0.f, -sin(currentTime), 0.f,
 			0.f, 1.f, 0.f, 0.f,
 			sin(currentTime), 0.f, cos(currentTime), 0.f,
 			0.f, 0.f, 0.f, 1.f };
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
-		glm::vec4 position = { 5.f, 3.f,8.f, 1.f };
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
