@@ -50,6 +50,17 @@ namespace MyFirstShader {
 	GLuint myVAO;
 }
 
+namespace ShaderValues {
+	glm::vec4 position = { 10.f, 10.f,10.f, 1.f };
+	glm::vec4 position1 = { -10.f, 10.f,10.f, 1.f };
+	glm::vec4 position2 = { 5.f, 5.f,5.f, 1.f };
+	glm::vec4 position3 = { -5.f, 5.f,5.f, 1.f };
+	glm::vec4 position4 = { 0.f, 0.f,0.f, 1.f };
+	glm::vec4 position5 = { 1.f, 1.f,1.f, 1.f };
+	glm::vec4 position6 = { -1.f, 1.f,1.f, 1.f };
+
+
+}
 
 namespace RenderVars {
 	float FOV = glm::radians(65.f); //Fov
@@ -122,20 +133,36 @@ void myRenderCode(double currentTime)
 	// render code
 	//Box::drawCube();
 	//Axis::drawAxis();
-	glm::vec4 position = { 10.f, 10.f,10.f, 1.f };
-	MyFirstShader::myRenderCode(currentTime, position);
-	glm::vec4 position1 = { -10.f, 10.f,10.f, 1.f };
-	MyFirstShader::myRenderCode(currentTime, position1);
-	glm::vec4 position2 = { 5.f, 5.f,5.f, 1.f };
-	MyFirstShader::myRenderCode(currentTime, position2);
-	glm::vec4 position3 = { -5.f, 5.f,5.f, 1.f };
-	MyFirstShader::myRenderCode(currentTime, position3);
-	glm::vec4 position4 = { 0.f, 0.f,0.f, 1.f };
-	MyFirstShader::myRenderCode(currentTime, position4);
-	glm::vec4 position5 = { 1.f, 1.f,1.f, 1.f };
-	MyFirstShader::myRenderCode(currentTime, position5);
-	glm::vec4 position6 = { -1.f, 1.f,1.f, 1.f };
-	MyFirstShader::myRenderCode(currentTime, position6);
+	//glm::mat4 rotation =
+	//{
+	//	-cos(currentTime), 0.f, sin(currentTime), 0.f,
+	//	0.f, 1.f, 0.f, 0.f,
+	//	sin(currentTime), 0.f, -cos(currentTime), 0.f,
+	//	0.f, 0.f, 0.f, 1.f
+	//};
+	//glm::mat4 rotation1 =
+	//{
+	//	cos(currentTime), 0.f, sin(currentTime), 0.f,
+	//	0.f, 1.f, 0.f, 0.f,
+	//	-sin(currentTime), 0.f, cos(currentTime), 0.f,
+	//	0.f, 0.f, 0.f, 1.f
+	//};
+	//glm::mat4 rotation2 =
+	//{
+	//	cos(currentTime), 0.f, -sin(currentTime), 0.f,
+	//	0.f, 1.f, 0.f, 0.f,
+	//	-sin(currentTime), 0.f, cos(currentTime), 0.f,
+	//	0.f, 0.f, 0.f, 1.f
+	//};
+	
+	MyFirstShader::myRenderCode(currentTime, ShaderValues::position);
+	MyFirstShader::myRenderCode(currentTime, ShaderValues::position1);
+	MyFirstShader::myRenderCode(currentTime, ShaderValues::position2);
+	MyFirstShader::myRenderCode(currentTime, ShaderValues::position3);
+	MyFirstShader::myRenderCode(currentTime, ShaderValues::position4);
+	MyFirstShader::myRenderCode(currentTime, ShaderValues::position5);
+	MyFirstShader::myRenderCode(currentTime, ShaderValues::position6);
+
 	ImGui::Render();
 }
 
@@ -216,8 +243,9 @@ namespace MyFirstShader {
 			"#version 330 \n\
 			layout(triangles) in;\n\
 			layout(triangle_strip, max_vertices = 24) out;\n\
-			uniform mat4 rotation;\n\
+			uniform mat4 vision;\n\
 			uniform vec4 position;\n\
+			uniform mat4 rotation;\n\
 			void main()\n\
 			{\n\
 				vec4 vertices[4] = vec4[4](vec4(0.25, -0.25, 0.25, 1.0)+position,\n\
@@ -228,7 +256,7 @@ namespace MyFirstShader {
 				//CARA 1\n\
 				for (int i = 0; i<4; i++)\n\
 				{\n\
-					gl_Position = rotation*vertices[i];\n\
+					gl_Position = vision*vertices[i]+ gl_in[0].gl_Position;\n\
 					gl_PrimitiveID = 0;\n\
 					EmitVertex();\n\
 				}\n\
@@ -241,7 +269,7 @@ namespace MyFirstShader {
 										vec4(-0.25, 0.25, -0.25, 1.0)+position);\n\
 				for (int i = 0; i<4; i++)\n\
 				{\n\
-					gl_Position = rotation*vertices2[i];\n\
+					gl_Position = vision*vertices2[i]+ gl_in[0].gl_Position;\n\
 					gl_PrimitiveID = 1;\n\
 					EmitVertex();\n\
 				}\n\
@@ -253,7 +281,7 @@ namespace MyFirstShader {
 										vec4(-0.25, 0.25, -0.25, 1.0)+position);\n\
 				for (int i = 0; i<4; i++)\n\
 				{\n\
-					gl_Position = rotation*vertices3[i];\n\
+					gl_Position = vision*vertices3[i]+ gl_in[0].gl_Position;\n\
 					gl_PrimitiveID = 2;\n\
 					EmitVertex();\n\
 				}\n\
@@ -265,7 +293,7 @@ namespace MyFirstShader {
 										vec4(0.25, 0.25, -0.25, 1.0)+position);\n\
 				for (int i = 0; i<4; i++)\n\
 				{\n\
-					gl_Position = rotation*vertices4[i];\n\
+					gl_Position = vision*vertices4[i]+ gl_in[0].gl_Position;\n\
 					gl_PrimitiveID = 3;\n\
 					EmitVertex();\n\
 				}\n\
@@ -277,7 +305,7 @@ namespace MyFirstShader {
 										vec4(0.25, -0.25, -0.25, 1.0)+position);\n\
 				for (int i = 0; i<4; i++)\n\
 				{\n\
-					gl_Position = rotation*vertices5[i];\n\
+					gl_Position = vision*vertices5[i]+ gl_in[0].gl_Position;\n\
 					gl_PrimitiveID = 4;\n\
 					EmitVertex();\n\
 				}\n\
@@ -289,7 +317,7 @@ namespace MyFirstShader {
 										vec4(0.25, 0.25, 0.25, 1.0)+position);\n\
 				for (int i = 0; i<4; i++)\n\
 				{\n\
-					gl_Position = rotation*vertices6[i];\n\
+					gl_Position = vision*vertices6[i]+ gl_in[0].gl_Position;\n\
 					gl_PrimitiveID = 5;\n\
 					EmitVertex();\n\
 				}\n\
@@ -339,12 +367,17 @@ namespace MyFirstShader {
 
 	void myRenderCode(double currentTime, glm::vec4 position) {
 		glUseProgram(myRenderProgram);
-		glm::mat4 rotation = { cos(currentTime), 0.f, -sin(currentTime), 0.f,
-			0.f, 1.f, 0.f, 0.f,
-			sin(currentTime), 0.f, cos(currentTime), 0.f,
-			0.f, 0.f, 0.f, 1.f };
-		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "vision"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
+		position.y -= currentTime;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
+		glm::mat4 rotation = 
+		{
+			1.f, 0.f, 0.f, 0.f,
+			0.f, cos(currentTime), sin(currentTime), 0.f,
+			0.f, -sin(currentTime), cos(currentTime), 0.f,
+			0.f, 0.f, 0.f, 1.f
+		};
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 }
