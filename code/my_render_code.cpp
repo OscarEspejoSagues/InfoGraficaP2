@@ -362,13 +362,7 @@ namespace MyFirstShader {
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "vision"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
 		position.y -= currentTime;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
-		glm::mat4 rotation = 
-		{
-			1.f, 0.f, 0.f, 0.f,
-			0.f, cos(currentTime), sin(currentTime), 0.f,
-			0.f, -sin(currentTime), cos(currentTime), 0.f,
-			0.f, 0.f, 0.f, 1.f
-		};
+
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
@@ -402,9 +396,15 @@ namespace Octahedron {
 			out vec4 color;\n\
 			\n\
 			void main() {\n\
-			const vec4 colors[14] = vec4[14](vec4(1.0,0.0,0.0,1.0),vec4(0.0,1.0,0.0,1.0),vec4(0.0,0.0,1.0,1.0),vec4(1.0,1.0,0.0,1.0),vec4(0.0,1.0,0.0,1.0),vec4(1,0,0,1),vec4(1,1,0,1),vec4(0,0,1,1),vec4(1,1,1,1),vec4(1,1,1,1),vec4(1,1,1,1),vec4(1,1,1,1),vec4(1,1,1,1),vec4(1,1,1,1));\n\
-			color = colors[gl_PrimitiveID];\n\
-			}" };
+			const vec4 colors[6] = vec4[6](vec4( 0, 1, 0, 1.0),\n\
+											vec4(0.25, 0.25, 0.5, 1.0),\n\
+											vec4( 1, 0.25, 0.5, 1.0),\n\
+											vec4(0.25, 0, 0, 1.0),\n\
+											vec4( 1, 0, 0, 1.0),\n\
+											vec4( 0.25, 0.25, 0.5, 1.0));\n\
+			color = colors[gl_PrimitiveID ];\n\
+			}" 
+		};
 
 
 
