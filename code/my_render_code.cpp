@@ -135,10 +135,10 @@ void myRenderCode(double currentTime)
 	RV::_modelView = glm::mat4(1.f);
 	RV::_modelView = glm::translate(RV::_modelView, glm::vec3(RV::panv[0], RV::panv[1], RV::panv[2]));
 
-	//RV::_projection = glm::perspective(RV::FOV, (float)w / (float)h, RV::zNear, RV::zFar);//si no es la escena 1 tenemos vision en perspectiva
-	float aux = -200.f;
-	RV::_projection = glm::ortho((float)-w / aux, (float)w / aux, (float)h / aux, (float)-h / aux, 0.1f, 100.f); //camara orthonormal
-	RV::_modelView = glm::rotate(glm::mat4(1.0f), 170.f, glm::vec3(1.f, 1.f, 0.f));//rotamos para tener una perspectiva 3D
+	RV::_projection = glm::perspective(RV::FOV, (float)w / (float)h, RV::zNear, RV::zFar);//si no es la escena 1 tenemos vision en perspectiva
+	//float aux = -200.f;
+	//RV::_projection = glm::ortho((float)-w / aux, (float)w / aux, (float)h / aux, (float)-h / aux, 0.1f, 100.f); //camara orthonormal
+	//RV::_modelView = glm::rotate(glm::mat4(1.0f), 170.f, glm::vec3(1.f, 1.f, 0.f));//rotamos para tener una perspectiva 3D
 
 	RV::_modelView = glm::rotate(RV::_modelView, RV::rota[1], glm::vec3(1.f, 0.f, 0.f));
 	RV::_modelView = glm::rotate(RV::_modelView, RV::rota[0], glm::vec3(0.f, 1.f, 0.f));
@@ -363,7 +363,7 @@ namespace MyFirstShader {
 		position.y -= currentTime;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
 
-		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
+		//glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 }
@@ -396,10 +396,14 @@ namespace Octahedron {
 			out vec4 color;\n\
 			\n\
 			void main() {\n\
-			const vec4 colors[6] = vec4[6](vec4( 0, 1, 0, 1.0),\n\
+			const vec4 colors[10] = vec4[10](vec4( 0, 1, 0, 1.0),\n\
 											vec4(0.25, 0.25, 0.5, 1.0),\n\
 											vec4( 1, 0.25, 0.5, 1.0),\n\
 											vec4(0.25, 0, 0, 1.0),\n\
+											vec4( 1, 0, 0, 1.0),\n\
+											vec4( 1, 0, 0, 1.0),\n\
+											vec4( 1, 0, 0, 1.0),\n\
+											vec4( 1, 0, 0, 1.0),\n\
 											vec4( 1, 0, 0, 1.0),\n\
 											vec4( 0.25, 0.25, 0.5, 1.0));\n\
 			color = colors[gl_PrimitiveID ];\n\
@@ -415,13 +419,17 @@ namespace Octahedron {
 			layout(triangles) in;													\n\
 			layout(triangle_strip, max_vertices = 72) out;							\n\
 			uniform mat4 rot;														\n\
+			uniform vec4 position;													\n\
 			void main()																\n\
 			{																		\n\
-				//ROJO                                                             \n\
-				vec4 vertices[3] = vec4[3]( vec4(0.0, 1.0, 0.0, 1.0),//arriba		\n\
-											vec4(-1.0, 0.0, 1.0, 1.0),	//derecha	\n\
-											vec4(1.0, 0.0, 1.0, 1.0));	//izquierda	\n\
-				for (int i = 0; i <3; i++)											\n\
+				//ROJO                                                              \n\
+				vec4 vertices[6] = vec4[6]( vec4(0.3, 0.7, 0.0, 1.0)+position,				\n\
+											vec4(-0.3, 0.7, 0.0, 1.0)+position,				\n\
+											vec4(0.65, 0.3, 0.3, 1.0)+position,				\n\
+											vec4(-0.65, 0.3, 0.3, 1.0)+position,				\n\
+											vec4(0.3, 0.0, 0.6, 1.0)+position,				\n\
+											vec4(-0.3, 0.0, 0.6, 1.0)+position);				\n\
+				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices[i];									\n\
 					gl_PrimitiveID = 0;												\n\
@@ -429,21 +437,27 @@ namespace Octahedron {
 				}																	\n\
 				EndPrimitive();														\n\
 				//VERDE                                                             \n\
-				vec4 vertices1[3] = vec4[3]( vec4(0.0, 1.0, 0.0, 1.0),				\n\
-											vec4(-1.0, 0.0, -1.0, 1.0),				\n\
-											vec4(-1.0, 0.0, 1.0, 1.0));				\n\
-				for (int i = 0; i <3; i++)											\n\
+				vec4 vertices1[6] = vec4[6]( vec4(-0.3, 0.7, 0.0, 1.0)+position,				\n\
+											vec4(-0.3, 0.7, -0.7, 1.0)+position,				\n\
+											vec4(-0.65, 0.3, 0.3, 1.0)+position,				\n\
+											vec4(-0.65, 0.3, -1, 1.0)+position,				\n\
+											vec4(-0.9, 0.0, 0.0, 1.0)+position,				\n\
+											vec4(-0.9, 0.0, -0.7, 1.0)+position);			\n\
+				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices1[i];									\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
-				//EndPrimitive();													\n\
-				//AZUL                                                              \n\
-				vec4 vertices2[3] = vec4[3]( vec4(0.0, 1.0, 0.0, 1.0),			    \n\
-											vec4(1.0, 0.0, -1.0, 1.0),		        \n\
-											vec4(1.0, 0.0, 1.0, 1.0));		        \n\
-				for (int i = 0; i <3; i++)											\n\
+				EndPrimitive();														\n\
+				////AZUL                                                            \n\
+				vec4 vertices2[6] = vec4[6]( vec4(0.3, 0.7, -0.7, 1.0)+position,			    \n\
+											vec4(0.3, 0.7, 0.0, 1.0)+position,		        \n\
+											vec4(0.65, 0.3, -1, 1.0)+position,		        \n\
+											vec4(0.65, 0.3, 0.3, 1.0)+position,		        \n\
+											vec4(0.9, 0.0, -0.8, 1.0)+position,		        \n\
+											vec4(0.9, 0.0, 0.0, 1.0)+position);		        \n\
+				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices2[i];									\n\
 					gl_PrimitiveID = 2;												\n\
@@ -451,57 +465,145 @@ namespace Octahedron {
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices3[3] = vec4[3]( vec4(0.0, 1.0, 0.0, 1.0),				\n\
-											vec4(1.0, 0.0, -1.0, 1.0),				\n\
-											vec4(-1.0, 0.0, -1.0, 1.0));			\n\
-				for (int i = 0; i <3; i++)											\n\
+				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.7, -0.7, 1.0)+position,			\n\
+											vec4(0.3, 0.7, -0.7, 1.0)+position,				\n\
+											vec4(-0.65, 0.3, -1, 1.0)+position,				\n\
+											vec4(0.65, 0.3, -1, 1.0)+position,				\n\
+											vec4(-0.3, 0.0, -1.2, 1.0)+position,				\n\
+											vec4(0.3, 0.0, -1.2, 1.0)+position);				\n\
+				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices3[i];									\n\
 					gl_PrimitiveID = 3;												\n\
 					EmitVertex();													\n\
 				}																	\n\
-				//PARTE INFERIOR													\n\
+				EndPrimitive();														\n\
+				////PARTE INFERIOR													\n\
 				//ROJO                                                              \n\
-				vec4 vertices4[3] = vec4[3]( vec4(0.0, -1.0, 0.0, 1.0),//arriba		\n\
-											vec4(-1.0, 0.0, 1.0, 1.0),	//derecha	\n\
-											vec4(1.0, 0.0, 1.0, 1.0));	//izquierda	\n\
-				for (int i = 0; i <3; i++)											\n\
+				vec4 vertices4[6] = vec4[6]( vec4(-0.3, -0.7, 0.0, 1.0)+position,			\n\
+											vec4(0.3, -0.7, 0.0, 1.0)+position,				\n\
+											vec4(-0.65, -0.3, 0.3, 1.0)+position,			\n\
+											vec4(0.65, -0.3, 0.3, 1.0)+position,				\n\
+											vec4(-0.3, 0.0, 0.6, 1.0)+position,				\n\
+											vec4(0.3, 0.0, 0.6, 1.0)+position);				\n\
+				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices4[i];									\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 4;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				//VERDE                                                             \n\
-				vec4 vertices5[3] = vec4[3]( vec4(0.0, -1.0, 0.0, 1.0),				\n\
-											vec4(-1.0, 0.0, 1.0, 1.0),				\n\
-											vec4(-1.0, 0.0, -1.0, 1.0));			\n\
-				for (int i = 0; i <3; i++)											\n\
+				vec4 vertices5[6] = vec4[6]( vec4(-0.3, -0.7, -0.7, 1.0)+position,			\n\
+											vec4(-0.3, -0.7, 0.0, 1.0)+position,				\n\
+											vec4(-0.65, -0.3, -1, 1.0)+position,				\n\
+											vec4(-0.65, -0.3, 0.3, 1.0)+position,			\n\
+											vec4(-0.9, 0.0, -0.7, 1.0)+position,				\n\
+											vec4(-0.9, 0.0, 0.0, 1.0)+position);				\n\
+				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices5[i];									\n\
-					gl_PrimitiveID = 1;												\n\
+					gl_PrimitiveID = 5;												\n\
 					EmitVertex();													\n\
 				}																	\n\
-				//EndPrimitive();													\n\
-				//AZUL                                                              \n\
-				vec4 vertices6[3] = vec4[3]( vec4(0.0, -1.0, 0.0, 1.0),			    \n\
-											vec4(1.0, 0.0, 1.0, 1.0),		        \n\
-											vec4(1.0, 0.0, -1.0, 1.0));		        \n\
-				for (int i = 0; i <3; i++)											\n\
+				EndPrimitive();														\n\
+				////AZUL                                                            \n\
+				vec4 vertices6[6] = vec4[6]( vec4(0.3, -0.7, 0.0, 1.0)+position,				\n\
+											vec4(0.3, -0.7, -0.7, 1.0)+position,		        \n\
+											vec4(0.65, -0.3, 0.3, 1.0)+position,		        \n\
+											vec4(0.65, -0.3, -1, 1.0)+position,		        \n\
+											vec4(0.9, 0.0, 0.0, 1.0)+position,		        \n\
+											vec4(0.9, 0.0, -0.8, 1.0)+position);		        \n\
+				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices6[i];									\n\
-					gl_PrimitiveID = 2;												\n\
+					gl_PrimitiveID = 6;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices7[3] = vec4[3]( vec4(0.0, -1.0, 0.0, 1.0),				\n\
-											vec4(-1.0, 0.0, -1.0, 1.0),				\n\
-											vec4(1.0, 0.0, -1.0, 1.0));				\n\
-				for (int i = 0; i <3; i++)											\n\
+				vec4 vertices7[6] = vec4[6]( vec4(0.3, -0.7, -0.7, 1.0)+position,			\n\
+											vec4(-0.3, -0.7, -0.7, 1.0)+position,			\n\
+											vec4(0.65, -0.3, -1, 1.0)+position,				\n\
+											vec4(-0.65, -0.3, -1, 1.0)+position,				\n\
+											vec4(0.3, 0.0, -1.2, 1.0)+position,				\n\
+											vec4(-0.3, 0.0, -1.2, 1.0)+position);			\n\
+				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices7[i];									\n\
-					gl_PrimitiveID = 3;												\n\
+					gl_PrimitiveID = 7;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//CUADRADOS															\n\
+				//TOP                                                               \n\
+					vec4 vertices8[4] = vec4[4]( vec4(0.3, 0.7, 0.0, 1.0)+position,			\n\
+										vec4(0.3, 0.7, -0.7, 1.0)+position,					\n\
+										vec4(-0.3, 0.7, 0.0, 1.0)+position,					\n\
+										vec4(-0.3, 0.7, -0.7, 1.0)+position);				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*vertices8[i];									\n\
+					gl_PrimitiveID = 8;											\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//BOT                                                               \n\
+					vec4 vertices9[4] = vec4[4]( vec4(-0.3, -0.7, 0.0, 1.0)+position,		\n\
+										vec4(-0.3, -0.7, -0.7, 1.0)+position,				\n\
+										vec4(0.3, -0.7, 0.0, 1.0)+position,					\n\
+										vec4(0.3, -0.7, -0.7, 1.0)+position);				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*vertices9[i];									\n\
+					gl_PrimitiveID = 9;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//LAT1                                                              \n\
+					vec4 vertices10[4] = vec4[4]( vec4(-0.65, 0.3, 0.3, 1.0)+position,		\n\
+										vec4(-0.9, 0.0, 0.0, 1.0)+position,					\n\
+										vec4(-0.3, 0.0, 0.6, 1.0)+position,					\n\
+										vec4(-0.65, -0.3, 0.3, 1.0)+position);				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*vertices10[i];								\n\
+					gl_PrimitiveID = 10;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//LAT2                                                              \n\
+					vec4 vertices11[4] = vec4[4]( vec4(0.65, 0.3, 0.3, 1.0)+position,		\n\
+										vec4(0.3, 0.0, 0.6, 1.0)+position,					\n\
+										vec4(0.9, 0.0, 0.0, 1.0)+position,					\n\
+										vec4(0.65, -0.3, 0.3, 1.0)+position);				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*vertices11[i];								\n\
+					gl_PrimitiveID = 10;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//LAT3                                                              \n\
+					vec4 vertices12[4] = vec4[4]( vec4(0.65, 0.3, -1, 1.0)+position,			\n\
+										vec4(0.9, 0.0, -0.8, 1.0)+position,					\n\
+										vec4(0.3, 0.0, -1.2, 1.0)+position,					\n\
+										vec4(0.65, -0.3, -1, 1.0)+position);					\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*vertices12[i];								\n\
+					gl_PrimitiveID = 10;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				//LAT4                                                              \n\
+					vec4 vertices13[4] = vec4[4]( vec4(-0.65, 0.3, -1, 1.0)+position,		\n\
+										vec4(-0.3, 0.0, -1.2, 1.0)+position,					\n\
+										vec4(-0.9, 0.0, -0.7, 1.0)+position,					\n\
+										vec4(-0.65, -0.3, -1, 1.0)+position);				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*vertices13[i];								\n\
+					gl_PrimitiveID = 10;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 			}"
@@ -549,6 +651,9 @@ namespace Octahedron {
 	void myRenderCode(double currentTime) {
 		glUseProgram(myRenderProgram);
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rot"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
+		glm::vec4 position5 = { 10.f, 1.f,1.f, 1.f };
+		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position5);
+
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 }
