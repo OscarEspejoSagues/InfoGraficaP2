@@ -82,6 +82,8 @@ namespace ShaderValues {
 	glm::vec4 position_3_Honey = { -0.45f, 1.95f, 1.f, 1.f };
 	glm::vec4 position_4_Honey = { -0.4f, -0.17f, 1.f, 1.f };
 	glm::vec4 position_5_Honey = { 0.98f, -1.f, 1.f, 1.f };
+	glm::vec4 position_6_Honey = { 0.9f, 3.1f, 1.f, 1.f };
+	glm::vec4 position_7_Honey = { 2.4f, -0.1f, 1.f, 1.f };
 }
 
 namespace RenderVars {
@@ -167,6 +169,8 @@ void myRenderCode(double currentTime)
 	Octahedron::HoneyComb(ShaderValues::position_3_Honey);
 	Octahedron::HoneyComb(ShaderValues::position_4_Honey);
 	Octahedron::HoneyComb(ShaderValues::position_5_Honey);
+	Octahedron::HoneyComb(ShaderValues::position_6_Honey);
+	Octahedron::HoneyComb(ShaderValues::position_7_Honey);
 	//Octahedron::myRenderCode(currentTime, ShaderValues::position, RotMatX, scale);
 	/*Octahedron::myRenderCode(currentTime, ShaderValues::position1, RotMatY, scale);
 	Octahedron::myRenderCode(currentTime, ShaderValues::position2, RotMatX, scale);
