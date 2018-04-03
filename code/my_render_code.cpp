@@ -10,8 +10,13 @@
 #include "GL_framework.h"
 
 int w, h; //variables donde guardamos la witdh y la height
+glm::mat4 RotMatX;
+glm::mat4 RotMatY;
+glm::mat4 RotMatZ;
+glm::mat4 scale;
+glm::mat4 fall;
 
-
+void InitMatsFall(double currentTime);
 
 ///////// fw decl
 namespace ImGui {
@@ -55,22 +60,20 @@ namespace Octahedron {
 	GLuint myShaderCompile(void);
 
 	void myCleanupCode(void);
-	void myRenderCode(double currentTime);
+	void myRenderCode(double currentTime, glm::vec4 position, glm::mat4 rotation, glm::mat4 scale);
 
 	GLuint myRenderProgram;
 	GLuint myVAO;
 }
 
 namespace ShaderValues {
-	glm::vec4 position = { 2.f, 2.f,2.f, 1.f };
-	glm::vec4 position1 = { -10.f, 10.f,10.f, 1.f };
-	glm::vec4 position2 = { 5.f, 5.f,5.f, 1.f };
-	glm::vec4 position3 = { -5.f, 5.f,5.f, 1.f };
-	glm::vec4 position4 = { 0.f, 0.f,0.f, 1.f };
-	glm::vec4 position5 = { 1.f, 1.f,1.f, 1.f };
-	glm::vec4 position6 = { -1.f, 1.f,1.f, 1.f };
-
-
+	glm::vec4 position = { 2.f, 15.f, 1.f, 1.f };
+	glm::vec4 position1 = { -10.f, 15.f,1.f, 1.f };
+	glm::vec4 position2 = { 5.f, 15.f,1.f, 1.f };
+	glm::vec4 position3 = { -5.f, 15.f,1.f, 1.f };
+	glm::vec4 position4 = { 0.f, 15.f,1.f, 1.f };
+	glm::vec4 position5 = { 8.f, 15.f,1.f, 1.f };
+	glm::vec4 position6 = { -1.f, 15.f,1.f, 1.f };
 }
 
 namespace RenderVars {
@@ -129,7 +132,7 @@ void myCleanupCode() {
 	Octahedron::myCleanupCode();
 }
 
-void myRenderCode(double currentTime) 
+void myRenderCode(double currentTime)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	RV::_modelView = glm::mat4(1.f);
@@ -144,10 +147,22 @@ void myRenderCode(double currentTime)
 	RV::_modelView = glm::rotate(RV::_modelView, RV::rota[0], glm::vec3(0.f, 1.f, 0.f));
 
 	RV::_MVP = RV::_projection * RV::_modelView;
-	
+
+	InitMatsFall(currentTime);
+
 	MyFirstShader::myRenderCode(currentTime, ShaderValues::position);
 
-	Octahedron::myRenderCode(currentTime);
+
+
+
+	Octahedron::myRenderCode(currentTime, ShaderValues::position, RotMatX, scale);
+	Octahedron::myRenderCode(currentTime, ShaderValues::position1, RotMatY, scale);
+	Octahedron::myRenderCode(currentTime, ShaderValues::position2, RotMatX, scale);
+	Octahedron::myRenderCode(currentTime, ShaderValues::position3, RotMatY, scale);
+	Octahedron::myRenderCode(currentTime, ShaderValues::position4, RotMatZ, scale);
+	Octahedron::myRenderCode(currentTime, ShaderValues::position5, RotMatY, scale);
+	Octahedron::myRenderCode(currentTime, ShaderValues::position6, RotMatX, scale);
+
 
 	ImGui::Render();
 }
@@ -220,7 +235,7 @@ namespace MyFirstShader {
 											vec4( 1, 0, 0, 1.0),\n\
 											vec4( 0.25, 0.25, 0.5, 1.0));\n\
 			color = colors[gl_PrimitiveID ];\n\
-			}" 
+			}"
 		};
 
 
@@ -354,7 +369,7 @@ namespace MyFirstShader {
 	void myRenderCode(double currentTime, glm::vec4 position) {
 		glUseProgram(myRenderProgram);
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "vision"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
-		position.y -= currentTime;
+		position.y -= currentTime * 4;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
 
 		//glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
@@ -390,18 +405,18 @@ namespace Octahedron {
 			out vec4 color;\n\
 			\n\
 			void main() {\n\
-			const vec4 colors[10] = vec4[10](vec4( 0, 1, 0, 1.0),\n\
-											vec4(0.25, 0.25, 0.5, 1.0),\n\
-											vec4( 1, 0.25, 0.5, 1.0),\n\
-											vec4(0.25, 0, 0, 1.0),\n\
-											vec4( 1, 0, 0, 1.0),\n\
-											vec4( 1, 0, 0, 1.0),\n\
-											vec4( 1, 0, 0, 1.0),\n\
-											vec4( 1, 0, 0, 1.0),\n\
-											vec4( 1, 0, 0, 1.0),\n\
-											vec4( 0.25, 0.25, 0.5, 1.0));\n\
+			const vec4 colors[10] = vec4[10](vec4( 1, 0, 0, 1.0),\n\
+											vec4(0,1,0, 1.0),\n\
+											vec4(0, 0, 1, 1.0),\n\
+											vec4(0.10, 0, 1, 1.0),\n\
+											vec4( 1, 0.40, 0, 1.0),\n\
+											vec4( 0, 0.40, 0.40, 1.0),\n\
+											vec4( 0.1, 0.3, 0.1, 1.0),\n\
+											vec4( 0.9, 0.2, 0.4, 1.0),\n\
+											vec4( 0.6, 0.3, 0.5, 1.0),\n\
+											vec4( 1.0, 1.0, 1.0, 1.0));\n\
 			color = colors[gl_PrimitiveID ];\n\
-			}" 
+			}"
 		};
 
 
@@ -413,6 +428,8 @@ namespace Octahedron {
 			layout(triangles) in;													\n\
 			layout(triangle_strip, max_vertices = 72) out;							\n\
 			uniform mat4 rot;														\n\
+			uniform mat4 scale;														\n\
+            uniform mat4 RotMat;													\n\
 			uniform vec4 position;													\n\
 			void main()																\n\
 			{																		\n\
@@ -425,7 +442,7 @@ namespace Octahedron {
 											vec4(-0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices[i]+position;									\n\
+					gl_Position = rot*RotMat*scale*vertices[i]+position;			\n\
 					gl_PrimitiveID = 0;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -439,7 +456,7 @@ namespace Octahedron {
 											vec4(-0.9, 0.0, -0.7, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices1[i]+position;									\n\
+					gl_Position = rot*RotMat*scale*vertices1[i]+position;			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -453,7 +470,7 @@ namespace Octahedron {
 											vec4(0.9, 0.0, 0.0, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices2[i]+position;									\n\
+					gl_Position = rot*RotMat*scale*vertices2[i]+position;			\n\
 					gl_PrimitiveID = 2;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -467,7 +484,7 @@ namespace Octahedron {
 											vec4(0.3, 0.0, -1.2, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices3[i]+position;									\n\
+					gl_Position = rot*RotMat*scale*vertices3[i]+position;			\n\
 					gl_PrimitiveID = 3;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -482,7 +499,7 @@ namespace Octahedron {
 											vec4(0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices4[i]+position;									\n\
+					gl_Position = rot*RotMat*scale*vertices4[i]+position;			\n\
 					gl_PrimitiveID = 4;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -496,7 +513,7 @@ namespace Octahedron {
 											vec4(-0.9, 0.0, 0.0, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices5[i]+position;									\n\
+					gl_Position = rot*RotMat*scale*vertices5[i]+position;			\n\
 					gl_PrimitiveID = 5;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -510,7 +527,7 @@ namespace Octahedron {
 											vec4(0.9, 0.0, -0.8, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices6[i]+position;									\n\
+					gl_Position = rot*RotMat*scale*vertices6[i]+position;			\n\
 					gl_PrimitiveID = 6;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -524,7 +541,7 @@ namespace Octahedron {
 											vec4(-0.3, 0.0, -1.2, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices7[i]+position;									\n\
+					gl_Position = rot*RotMat*scale*vertices7[i]+position;			\n\
 					gl_PrimitiveID = 7;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -537,8 +554,8 @@ namespace Octahedron {
 										vec4(-0.3, 0.7, -0.7, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices8[i]+position;									\n\
-					gl_PrimitiveID = 8;											\n\
+					gl_Position = rot*RotMat*scale*vertices8[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -549,8 +566,8 @@ namespace Octahedron {
 										vec4(0.3, -0.7, -0.7, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices9[i]+position;									\n\
-					gl_PrimitiveID = 9;												\n\
+					gl_Position = rot*RotMat*scale*vertices9[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -561,8 +578,8 @@ namespace Octahedron {
 										vec4(-0.65, -0.3, 0.3, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices10[i]+position;								\n\
-					gl_PrimitiveID = 10;												\n\
+					gl_Position = rot*RotMat*scale*vertices10[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -573,8 +590,8 @@ namespace Octahedron {
 										vec4(0.65, -0.3, 0.3, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices11[i]+position;								\n\
-					gl_PrimitiveID = 10;												\n\
+					gl_Position = rot*RotMat*scale*vertices11[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -585,8 +602,8 @@ namespace Octahedron {
 										vec4(0.65, -0.3, -1, 1.0));					\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices12[i]+position;								\n\
-					gl_PrimitiveID = 10;												\n\
+					gl_Position = rot*RotMat*scale*vertices12[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				//LAT4                                                              \n\
@@ -596,8 +613,8 @@ namespace Octahedron {
 										vec4(-0.65, -0.3, -1, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices13[i]+position;								\n\
-					gl_PrimitiveID = 10;												\n\
+					gl_Position = rot*RotMat*scale*vertices13[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 			}"
@@ -642,12 +659,13 @@ namespace Octahedron {
 	}
 
 
-	void myRenderCode(double currentTime) {
+	void myRenderCode(double currentTime, glm::vec4 position, glm::mat4 rotation, glm::mat4 scale) {
 		glUseProgram(myRenderProgram);
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rot"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
-		glm::vec4 position5 = { 10.f, 1.f,0.f, 0.f };
-		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position5);
-
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "RotMat"), 1, GL_FALSE, glm::value_ptr(rotation));
+		position.y -= currentTime;
+		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 }
@@ -992,10 +1010,38 @@ void main() {\n\
 		glBindVertexArray(0);
 		glDisable(GL_PRIMITIVE_RESTART);
 	}
-	
+
 
 	void updateColor(const glm::vec4 newColor) {
 		myColor = newColor;
 	}
 }
 
+void InitMatsFall(double currentTime) {
+	RotMatX = glm::mat4{
+		1.f, 0.f, 0.f, 0.f,
+		0.f, (float)cos(currentTime),(float)sin(currentTime), 0.f,
+		0.f, (float)-sin(currentTime), (float)cos(currentTime), 0.f,
+		0.f, 0.f, 0.f, 1.f
+	};
+
+	RotMatY = glm::mat4{
+		(float)cos(currentTime), 0.f, (float)-sin(currentTime), 0.f,
+		0.f, 1.f, 0.f, 0.f,
+		(float)sin(currentTime), 0.f, (float)cos(currentTime), 0.f,
+		0.f, 0.f, 0.f, 1.f
+	};
+	RotMatZ = glm::mat4{
+		(float)cos(currentTime), (float)-sin(currentTime), 0.f, 0.f,
+		(float)sin(currentTime), (float)cos(currentTime), 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f
+	};
+
+	scale = glm::mat4{
+		0.5f, 0.f, 0.f, 0.f,
+		0.0f, 0.5f, 0.f, 0.f,
+		0.0f, 0.f, 0.5f, 0.f,
+		0.0f, 0.f, 0.f, 1.f,
+	};
+}
