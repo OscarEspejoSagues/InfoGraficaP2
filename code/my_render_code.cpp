@@ -823,8 +823,8 @@ namespace WireframeOcta {
 
 		static const GLchar * geom_shader_source[] = {
 			"#version 330															\n\
-			layout(lines) in;													\n\
-			layout(line_strip, max_vertices = 72) out;							\n\
+			layout(lines) in;														\n\
+			layout(line_strip, max_vertices = 72) out;								\n\
 			uniform mat4 rot;														\n\
 			uniform mat4 scale;														\n\
             uniform mat4 RotMat;													\n\
@@ -832,12 +832,12 @@ namespace WireframeOcta {
 			void main()																\n\
 			{																		\n\
 				//ROJO                                                              \n\
-				vec4 vertices[6] = vec4[6]( vec4(0.3, 0.7, 0.0, 1.0),				\n\
-											vec4(-0.3, 0.7, 0.0, 1.0),				\n\
-											vec4(0.65, 0.3, 0.3, 1.0),				\n\
+				vec4 vertices[6] = vec4[6]( vec4(0.3, 0.0, 0.6, 1.0),				\n\
+											vec4(-0.3, 0.0, 0.6, 1.0),				\n\
 											vec4(-0.65, 0.3, 0.3, 1.0),				\n\
-											vec4(0.3, 0.0, 0.6, 1.0),				\n\
-											vec4(-0.3, 0.0, 0.6, 1.0));				\n\
+											vec4(-0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(0.65, 0.3, 0.3, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices[i]+position;			\n\
@@ -846,12 +846,12 @@ namespace WireframeOcta {
 				}																	\n\
 				EndPrimitive();														\n\
 				//VERDE                                                             \n\
-				vec4 vertices1[6] = vec4[6]( vec4(-0.3, 0.7, 0.0, 1.0),				\n\
-											vec4(-0.3, 0.7, -0.7, 1.0),				\n\
-											vec4(-0.65, 0.3, 0.3, 1.0),				\n\
+				vec4 vertices1[6] = vec4[6]( vec4(-0.9, 0.0, 0.0, 1.0),				\n\
+											vec4(-0.9, 0.0, -0.7, 1.0),				\n\
 											vec4(-0.65, 0.3, -1, 1.0),				\n\
-											vec4(-0.9, 0.0, 0.0, 1.0),				\n\
-											vec4(-0.9, 0.0, -0.7, 1.0));			\n\
+											vec4(-0.3, 0.7, -0.7, 1.0),				\n\
+											vec4(-0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(-0.65, 0.3, 0.3, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices1[i]+position;			\n\
@@ -860,12 +860,12 @@ namespace WireframeOcta {
 				}																	\n\
 				EndPrimitive();														\n\
 				////AZUL                                                            \n\
-				vec4 vertices2[6] = vec4[6]( vec4(0.3, 0.7, -0.7, 1.0),			    \n\
-											vec4(0.3, 0.7, 0.0, 1.0),		        \n\
-											vec4(0.65, 0.3, -1, 1.0),		        \n\
+				vec4 vertices2[6] = vec4[6]( vec4(0.9, 0.0, -0.8, 1.0),			    \n\
+											vec4(0.9, 0.0, 0.0, 1.0),		        \n\
 											vec4(0.65, 0.3, 0.3, 1.0),		        \n\
-											vec4(0.9, 0.0, -0.8, 1.0),		        \n\
-											vec4(0.9, 0.0, 0.0, 1.0));		        \n\
+											vec4(0.3, 0.7, 0.0, 1.0),		        \n\
+											vec4(0.3, 0.7, -0.7, 1.0),		        \n\
+											vec4(0.65, 0.3, -1, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices2[i]+position;			\n\
@@ -874,12 +874,12 @@ namespace WireframeOcta {
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.7, -0.7, 1.0),			\n\
-											vec4(0.3, 0.7, -0.7, 1.0),				\n\
-											vec4(-0.65, 0.3, -1, 1.0),				\n\
+				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.0, -1.2, 1.0),			\n\
+											vec4(0.3, 0.0, -1.2, 1.0),				\n\
 											vec4(0.65, 0.3, -1, 1.0),				\n\
-											vec4(-0.3, 0.0, -1.2, 1.0),				\n\
-											vec4(0.3, 0.0, -1.2, 1.0));				\n\
+											vec4(0.3, 0.7, -0.7, 1.0),				\n\
+											vec4(-0.3, 0.7, -0.7, 1.0),				\n\
+											vec4(-0.65, 0.3, -1, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices3[i]+position;			\n\
@@ -889,12 +889,12 @@ namespace WireframeOcta {
 				EndPrimitive();														\n\
 				////PARTE INFERIOR													\n\
 				//ROJO                                                              \n\
-				vec4 vertices4[6] = vec4[6]( vec4(-0.3, -0.7, 0.0, 1.0),			\n\
-											vec4(0.3, -0.7, 0.0, 1.0),				\n\
-											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
+				vec4 vertices4[6] = vec4[6]( vec4(0.3, 0.0, 0.6, 1.0),				\n\
 											vec4(0.65, -0.3, 0.3, 1.0),				\n\
-											vec4(-0.3, 0.0, 0.6, 1.0),				\n\
-											vec4(0.3, 0.0, 0.6, 1.0));				\n\
+											vec4(0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(-0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
+											vec4(-0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices4[i]+position;			\n\
@@ -903,12 +903,12 @@ namespace WireframeOcta {
 				}																	\n\
 				EndPrimitive();														\n\
 				//VERDE                                                             \n\
-				vec4 vertices5[6] = vec4[6]( vec4(-0.3, -0.7, -0.7, 1.0),			\n\
-											vec4(-0.3, -0.7, 0.0, 1.0),				\n\
-											vec4(-0.65, -0.3, -1, 1.0),				\n\
-											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
+				vec4 vertices5[6] = vec4[6]( vec4(-0.9, 0.0, 0.0, 1.0),				\n\
 											vec4(-0.9, 0.0, -0.7, 1.0),				\n\
-											vec4(-0.9, 0.0, 0.0, 1.0));				\n\
+											vec4(-0.65, -0.3, -1, 1.0),				\n\
+											vec4(-0.3, -0.7, -0.7, 1.0),				\n\
+											vec4(-0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(-0.65, -0.3, 0.3, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices5[i]+position;			\n\
@@ -917,12 +917,12 @@ namespace WireframeOcta {
 				}																	\n\
 				EndPrimitive();														\n\
 				////AZUL                                                            \n\
-				vec4 vertices6[6] = vec4[6]( vec4(0.3, -0.7, 0.0, 1.0),				\n\
-											vec4(0.3, -0.7, -0.7, 1.0),		        \n\
-											vec4(0.65, -0.3, 0.3, 1.0),		        \n\
-											vec4(0.65, -0.3, -1, 1.0),		        \n\
+				vec4 vertices6[6] = vec4[6]( vec4(0.9, 0.0, -0.8, 1.0),			    \n\
 											vec4(0.9, 0.0, 0.0, 1.0),		        \n\
-											vec4(0.9, 0.0, -0.8, 1.0));		        \n\
+											vec4(0.65, -0.3, 0.3, 1.0),		        \n\
+											vec4(0.3, -0.7, 0.0, 1.0),		        \n\
+											vec4(0.3, -0.7, -0.7, 1.0),		        \n\
+											vec4(0.65, -0.3, -1, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices6[i]+position;			\n\
@@ -931,12 +931,12 @@ namespace WireframeOcta {
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices7[6] = vec4[6]( vec4(0.3, -0.7, -0.7, 1.0),			\n\
-											vec4(-0.3, -0.7, -0.7, 1.0),			\n\
-											vec4(0.65, -0.3, -1, 1.0),				\n\
-											vec4(-0.65, -0.3, -1, 1.0),				\n\
+				vec4 vertices7[6] = vec4[6]( vec4(0.3, 0.0, -1.2, 1.0),			\n\
 											vec4(0.3, 0.0, -1.2, 1.0),				\n\
-											vec4(-0.3, 0.0, -1.2, 1.0));			\n\
+											vec4(0.65, -0.3, -1, 1.0),				\n\
+											vec4(0.3, -0.7, -0.7, 1.0),				\n\
+											vec4(-0.3, -0.7, -0.7, 1.0),				\n\
+											vec4(-0.65, -0.3, -1, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices7[i]+position;			\n\
@@ -947,9 +947,9 @@ namespace WireframeOcta {
 				//CUADRADOS															\n\
 				//TOP                                                               \n\
 					vec4 vertices8[4] = vec4[4]( vec4(0.3, 0.7, 0.0, 1.0),			\n\
-										vec4(0.3, 0.7, -0.7, 1.0),					\n\
 										vec4(-0.3, 0.7, 0.0, 1.0),					\n\
-										vec4(-0.3, 0.7, -0.7, 1.0));				\n\
+										vec4(-0.3, 0.7, -0.7, 1.0),					\n\
+										vec4(0.3, 0.7, -0.7, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices8[i]+position;			\n\
@@ -959,9 +959,9 @@ namespace WireframeOcta {
 				EndPrimitive();														\n\
 				//BOT                                                               \n\
 					vec4 vertices9[4] = vec4[4]( vec4(-0.3, -0.7, 0.0, 1.0),		\n\
-										vec4(-0.3, -0.7, -0.7, 1.0),				\n\
-										vec4(0.3, -0.7, 0.0, 1.0),					\n\
-										vec4(0.3, -0.7, -0.7, 1.0));				\n\
+										vec4(0.3, -0.7, 0.0, 1.0),				\n\
+										vec4(0.3, -0.7, -0.7, 1.0),					\n\
+										vec4(-0.3, -0.7, -0.7, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices9[i]+position;			\n\
@@ -972,8 +972,8 @@ namespace WireframeOcta {
 				//LAT1                                                              \n\
 					vec4 vertices10[4] = vec4[4]( vec4(-0.65, 0.3, 0.3, 1.0),		\n\
 										vec4(-0.9, 0.0, 0.0, 1.0),					\n\
-										vec4(-0.3, 0.0, 0.6, 1.0),					\n\
-										vec4(-0.65, -0.3, 0.3, 1.0));				\n\
+										vec4(-0.65, -0.3, 0.3, 1.0),					\n\
+										vec4(-0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices10[i]+position;			\n\
@@ -982,10 +982,10 @@ namespace WireframeOcta {
 				}																	\n\
 				EndPrimitive();														\n\
 				//LAT2                                                              \n\
-					vec4 vertices11[4] = vec4[4]( vec4(0.65, 0.3, 0.3, 1.0),		\n\
+					vec4 vertices11[4] = vec4[4]( vec4(0.65, -0.3, 0.3, 1.0),		\n\
 										vec4(0.3, 0.0, 0.6, 1.0),					\n\
-										vec4(0.9, 0.0, 0.0, 1.0),					\n\
-										vec4(0.65, -0.3, 0.3, 1.0));				\n\
+										vec4(0.65, 0.3, 0.3, 1.0),					\n\
+										vec4(0.9, 0.0, 0.0, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices11[i]+position;			\n\
@@ -994,10 +994,10 @@ namespace WireframeOcta {
 				}																	\n\
 				EndPrimitive();														\n\
 				//LAT3                                                              \n\
-					vec4 vertices12[4] = vec4[4]( vec4(0.65, 0.3, -1, 1.0),			\n\
+					vec4 vertices12[4] = vec4[4]( vec4(0.65, -0.3, -1, 1.0),			\n\
 										vec4(0.9, 0.0, -0.8, 1.0),					\n\
-										vec4(0.3, 0.0, -1.2, 1.0),					\n\
-										vec4(0.65, -0.3, -1, 1.0));					\n\
+										vec4(0.65, 0.3, -1, 1.0),					\n\
+										vec4(0.3, 0.0, -1.2, 1.0));					\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices12[i]+position;			\n\
@@ -1005,11 +1005,10 @@ namespace WireframeOcta {
 					EmitVertex();													\n\
 				}																	\n\
 				//LAT4                                                              \n\
-					vec4 vertices13[4] = vec4[4]( vec4(-0.65, 0.3, -1, 1.0),		\n\
-										vec4(-0.3, 0.0, -1.2, 1.0),					\n\
-										vec4(-0.9, 0.0, -0.7, 1.0),					\n\
-										vec4(-0.65, -0.3, -1, 1.0));				\n\
-				for (int i = 0; i <4; i++)											\n\
+					vec4 vertices13[3] = vec4[3](vec4(-0.3, 0.0, -1.2, 1.0),		\n\
+										vec4(-0.65, -0.3, -1, 1.0),					\n\
+										vec4(-0.9, 0.0, -0.7, 1.0));				\n\
+				for (int i = 0; i <3; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices13[i]+position;			\n\
 					gl_PrimitiveID = 10;											\n\
