@@ -24,8 +24,8 @@ glm::mat4 scaleCube;
 void InitMatsFall(double currentTime, bool fall);
 void InitMatsFallCube(double currentTime, bool fall);
 
-bool falling = false;
-bool fallingCube = false;
+bool falling = true;
+bool fallingCube = true;
 
 ///////// fw decl
 namespace ImGui {
@@ -791,8 +791,8 @@ namespace WireframeOcta {
 
 		static const GLchar * geom_shader_source[] = {
 			"#version 330															\n\
-			layout(triangles) in;													\n\
-			layout(triangle_strip, max_vertices = 72) out;							\n\
+			layout(lines) in;													\n\
+			layout(line_strip, max_vertices = 72) out;							\n\
 			uniform mat4 rot;														\n\
 			uniform mat4 scale;														\n\
             uniform mat4 RotMat;													\n\
@@ -1031,7 +1031,7 @@ namespace WireframeOcta {
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rot"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
 		position.y -= currentTime * 2;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_LINES, 0, 3);
 	}
 }
 
