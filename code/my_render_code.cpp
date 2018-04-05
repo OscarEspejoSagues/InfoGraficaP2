@@ -16,11 +16,17 @@ int w, h; //variables donde guardamos la witdh y la height
 glm::mat4 RotMatX;
 glm::mat4 RotMatY;
 glm::mat4 RotMatZ;
+glm::mat4 RotMatXZ;
+glm::mat4 RotMatYZ;
+glm::mat4 RotMatYX;
 glm::mat4 scale;
 
 glm::mat4 RotMatXCube;
 glm::mat4 RotMatYCube;
 glm::mat4 RotMatZCube;
+glm::mat4 RotMatXZCube;
+glm::mat4 RotMatYZCube;
+glm::mat4 RotMatYXCube;
 glm::mat4 scaleCube;
 
 glm::vec4 RandomPositionsArray[ARRAY_SIZE];
@@ -28,7 +34,7 @@ glm::vec4 RandomPositionsArray[ARRAY_SIZE];
 void InitMatsFall(double currentTime, bool fall);
 void InitMatsFallCube(double currentTime, bool fall);
 
-bool falling = true;
+bool falling = false;
 bool fallingCube = true;
 
 ///////// fw decl
@@ -213,16 +219,16 @@ void myRenderCode(double currentTime)
 	{
 
 		InitMatsFallCube(currentTime, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0], RotMatXZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatXZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatYZCube, fallingCube);
 		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[5], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatXZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatYZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatYXCube, fallingCube);
 
 	}
 	else
@@ -533,10 +539,10 @@ namespace Octahedron {
 			void main()																\n\
 			{																		\n\
 				//ROJO                                                              \n\
-				vec4 vertices[6] = vec4[6]( vec4(0.3, 0.7, 0.0, 1.0),				\n\
-											vec4(-0.3, 0.7, 0.0, 1.0),				\n\
-											vec4(0.65, 0.3, 0.3, 1.0),				\n\
-											vec4(-0.65, 0.3, 0.3, 1.0),				\n\
+				vec4 vertices[6] = vec4[6]( vec4(0.3, 0.75, 0.0, 1.0),				\n\
+											vec4(-0.3, 0.75, 0.0, 1.0),				\n\
+											vec4(0.65, 0.25, 0.3, 1.0),				\n\
+											vec4(-0.65, 0.25, 0.3, 1.0),				\n\
 											vec4(0.3, 0.0, 0.6, 1.0),				\n\
 											vec4(-0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
@@ -547,10 +553,10 @@ namespace Octahedron {
 				}																	\n\
 				EndPrimitive();														\n\
 				//VERDE                                                             \n\
-				vec4 vertices1[6] = vec4[6]( vec4(-0.3, 0.7, 0.0, 1.0),				\n\
-											vec4(-0.3, 0.7, -0.7, 1.0),				\n\
-											vec4(-0.65, 0.3, 0.3, 1.0),				\n\
-											vec4(-0.65, 0.3, -1, 1.0),				\n\
+				vec4 vertices1[6] = vec4[6]( vec4(-0.3, 0.75, 0.0, 1.0),				\n\
+											vec4(-0.3, 0.75, -0.7, 1.0),				\n\
+											vec4(-0.65, 0.25, 0.3, 1.0),				\n\
+											vec4(-0.65, 0.25, -1, 1.0),				\n\
 											vec4(-0.9, 0.0, 0.0, 1.0),				\n\
 											vec4(-0.9, 0.0, -0.7, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
@@ -561,10 +567,10 @@ namespace Octahedron {
 				}																	\n\
 				EndPrimitive();														\n\
 				////AZUL                                                            \n\
-				vec4 vertices2[6] = vec4[6]( vec4(0.3, 0.7, -0.7, 1.0),			    \n\
-											vec4(0.3, 0.7, 0.0, 1.0),		        \n\
-											vec4(0.65, 0.3, -1, 1.0),		        \n\
-											vec4(0.65, 0.3, 0.3, 1.0),		        \n\
+				vec4 vertices2[6] = vec4[6]( vec4(0.3, 0.75, -0.7, 1.0),			    \n\
+											vec4(0.3, 0.75, 0.0, 1.0),		        \n\
+											vec4(0.65, 0.25, -1, 1.0),		        \n\
+											vec4(0.65, 0.25, 0.3, 1.0),		        \n\
 											vec4(0.9, 0.0, -0.8, 1.0),		        \n\
 											vec4(0.9, 0.0, 0.0, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
@@ -575,10 +581,10 @@ namespace Octahedron {
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.7, -0.7, 1.0),			\n\
-											vec4(0.3, 0.7, -0.7, 1.0),				\n\
-											vec4(-0.65, 0.3, -1, 1.0),				\n\
-											vec4(0.65, 0.3, -1, 1.0),				\n\
+				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.75, -0.7, 1.0),			\n\
+											vec4(0.3, 0.75, -0.7, 1.0),				\n\
+											vec4(-0.65, 0.25, -1, 1.0),				\n\
+											vec4(0.65, 0.25, -1, 1.0),				\n\
 											vec4(-0.3, 0.0, -1.2, 1.0),				\n\
 											vec4(0.3, 0.0, -1.2, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
@@ -590,10 +596,10 @@ namespace Octahedron {
 				EndPrimitive();														\n\
 				////PARTE INFERIOR													\n\
 				//ROJO                                                              \n\
-				vec4 vertices4[6] = vec4[6]( vec4(-0.3, -0.7, 0.0, 1.0),			\n\
-											vec4(0.3, -0.7, 0.0, 1.0),				\n\
-											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
-											vec4(0.65, -0.3, 0.3, 1.0),				\n\
+				vec4 vertices4[6] = vec4[6]( vec4(-0.3, -0.75, 0.0, 1.0),			\n\
+											vec4(0.3, -0.75, 0.0, 1.0),				\n\
+											vec4(-0.65, -0.25, 0.3, 1.0),			\n\
+											vec4(0.65, -0.25, 0.3, 1.0),				\n\
 											vec4(-0.3, 0.0, 0.6, 1.0),				\n\
 											vec4(0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
@@ -604,10 +610,10 @@ namespace Octahedron {
 				}																	\n\
 				EndPrimitive();														\n\
 				//VERDE                                                             \n\
-				vec4 vertices5[6] = vec4[6]( vec4(-0.3, -0.7, -0.7, 1.0),			\n\
-											vec4(-0.3, -0.7, 0.0, 1.0),				\n\
-											vec4(-0.65, -0.3, -1, 1.0),				\n\
-											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
+				vec4 vertices5[6] = vec4[6]( vec4(-0.3, -0.75, -0.7, 1.0),			\n\
+											vec4(-0.3, -0.75, 0.0, 1.0),				\n\
+											vec4(-0.65, -0.25, -1, 1.0),				\n\
+											vec4(-0.65, -0.25, 0.3, 1.0),			\n\
 											vec4(-0.9, 0.0, -0.7, 1.0),				\n\
 											vec4(-0.9, 0.0, 0.0, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
@@ -618,10 +624,10 @@ namespace Octahedron {
 				}																	\n\
 				EndPrimitive();														\n\
 				////AZUL                                                            \n\
-				vec4 vertices6[6] = vec4[6]( vec4(0.3, -0.7, 0.0, 1.0),				\n\
-											vec4(0.3, -0.7, -0.7, 1.0),		        \n\
-											vec4(0.65, -0.3, 0.3, 1.0),		        \n\
-											vec4(0.65, -0.3, -1, 1.0),		        \n\
+				vec4 vertices6[6] = vec4[6]( vec4(0.3, -0.75, 0.0, 1.0),				\n\
+											vec4(0.3, -0.75, -0.7, 1.0),		        \n\
+											vec4(0.65, -0.25, 0.3, 1.0),		        \n\
+											vec4(0.65, -0.25, -1, 1.0),		        \n\
 											vec4(0.9, 0.0, 0.0, 1.0),		        \n\
 											vec4(0.9, 0.0, -0.8, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
@@ -632,10 +638,10 @@ namespace Octahedron {
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices7[6] = vec4[6]( vec4(0.3, -0.7, -0.7, 1.0),			\n\
-											vec4(-0.3, -0.7, -0.7, 1.0),			\n\
-											vec4(0.65, -0.3, -1, 1.0),				\n\
-											vec4(-0.65, -0.3, -1, 1.0),				\n\
+				vec4 vertices7[6] = vec4[6]( vec4(0.3, -0.75, -0.7, 1.0),			\n\
+											vec4(-0.3, -0.75, -0.7, 1.0),			\n\
+											vec4(0.65, -0.25, -1, 1.0),				\n\
+											vec4(-0.65, -0.25, -1, 1.0),				\n\
 											vec4(0.3, 0.0, -1.2, 1.0),				\n\
 											vec4(-0.3, 0.0, -1.2, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
@@ -1431,12 +1437,18 @@ void InitMatsFall(double currentTime, bool fall) {
 			0.f, 0.f, 0.f, 1.f
 		};
 
+		RotMatXZ = RotMatX * RotMatZ;
+		RotMatYZ = RotMatY * RotMatZ;
+		RotMatYX = RotMatY * RotMatX;
+
 		scale = glm::mat4{
 			0.5f, 0.f, 0.f, 0.f,
 			0.0f, 0.5f, 0.f, 0.f,
 			0.0f, 0.f, 0.5f, 0.f,
 			0.0f, 0.f, 0.f, 1.f,
 		};
+
+
 	}
 	else
 	{
@@ -1460,6 +1472,27 @@ void InitMatsFall(double currentTime, bool fall) {
 			0.f, 0.f, 0.f, 1.f
 		};
 		scale = glm::mat4{
+			1.f, 0.f, 0.f, 0.f,
+			0.0f, 1.f, 0.f, 0.f,
+			0.0f, 0.f, 1.f, 0.f,
+			0.0f, 0.f, 0.f, 1.f,
+		};
+
+		RotMatXZ= glm::mat4{
+			1.f, 0.f, 0.f, 0.f,
+			0.0f, 1.f, 0.f, 0.f,
+			0.0f, 0.f, 1.f, 0.f,
+			0.0f, 0.f, 0.f, 1.f,
+		};
+
+		RotMatYZ = glm::mat4{
+			1.f, 0.f, 0.f, 0.f,
+			0.0f, 1.f, 0.f, 0.f,
+			0.0f, 0.f, 1.f, 0.f,
+			0.0f, 0.f, 0.f, 1.f,
+		};
+
+		RotMatYX = glm::mat4{
 			1.f, 0.f, 0.f, 0.f,
 			0.0f, 1.f, 0.f, 0.f,
 			0.0f, 0.f, 1.f, 0.f,
@@ -1497,6 +1530,10 @@ void InitMatsFallCube(double currentTime, bool fall) {
 			0.0f, 0.f, 0.5f, 0.f,
 			0.0f, 0.f, 0.f, 1.f,
 		};
+
+		RotMatXZCube = RotMatXCube * RotMatZCube;
+		RotMatYZCube = RotMatYCube * RotMatZCube;
+		RotMatYXCube = RotMatYCube * RotMatXCube;
 	}
 	else
 	{
@@ -1520,6 +1557,27 @@ void InitMatsFallCube(double currentTime, bool fall) {
 			0.f, 0.f, 0.f, 1.f
 		};
 		scaleCube = glm::mat4{
+			1.f, 0.f, 0.f, 0.f,
+			0.0f, 1.f, 0.f, 0.f,
+			0.0f, 0.f, 1.f, 0.f,
+			0.0f, 0.f, 0.f, 1.f,
+		};
+
+		RotMatXZCube = glm::mat4{
+			1.f, 0.f, 0.f, 0.f,
+			0.0f, 1.f, 0.f, 0.f,
+			0.0f, 0.f, 1.f, 0.f,
+			0.0f, 0.f, 0.f, 1.f,
+		};
+
+		RotMatYZCube = glm::mat4{
+			1.f, 0.f, 0.f, 0.f,
+			0.0f, 1.f, 0.f, 0.f,
+			0.0f, 0.f, 1.f, 0.f,
+			0.0f, 0.f, 0.f, 1.f,
+		};
+
+		RotMatYXCube = glm::mat4{
 			1.f, 0.f, 0.f, 0.f,
 			0.0f, 1.f, 0.f, 0.f,
 			0.0f, 0.f, 1.f, 0.f,
