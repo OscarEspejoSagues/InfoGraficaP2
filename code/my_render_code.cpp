@@ -41,6 +41,12 @@ bool falling = false;
 bool fallingCube = false;
 bool honeycombwireframe = false;
 
+bool drawcube1 = false;
+bool drawcube2 = false;
+bool drawwireframe = false;
+bool drawocta1 = false;
+bool drawocta2 = false;
+
 ///////// fw decl
 
 glm::vec4 RandomPos()
@@ -180,19 +186,51 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			 fallingCube = false;
 			 honeycombwireframe = false;
 			 staticocto = false;
+
+			 drawcube1 = true;
+			 drawcube2 = false;
+			 drawwireframe = false;
+			 drawocta1 = false;
+			 drawocta2 = false;
 			 caida = 0.3f;
 			break;
 		case SDLK_2:
 			falling = false;
 			fallingCube = false;
-			honeycombwireframe = false;
+			honeycombwireframe = true;
 			staticocto = true;
+
+			drawcube1 = false;
+			drawcube2 = false;
+			drawocta1 = false;
+			drawocta2 = false;
+			drawwireframe = true;
+
 			break;
 		case SDLK_3:
 			falling = false;
 			fallingCube = true;
 			honeycombwireframe = false;
 			staticocto = false;
+
+			drawcube1 = false;
+			drawcube2 = true;
+			drawwireframe = false;
+			drawocta1 = false;
+			drawocta2 = false;
+			caida = 0.3f;
+			break;
+		case SDLK_4:
+			falling = false;
+			fallingCube = false;
+			honeycombwireframe = false;
+			staticocto = false;
+
+			drawcube1 = false;
+			drawcube2 = false;
+			drawwireframe = false;
+			drawocta1 = true;
+			drawocta2 = false;
 			caida = 0.3f;
 			break;
 		}
@@ -253,24 +291,55 @@ void myRenderCode(double currentTime)
 	RV::_MVP = RV::_projection * RV::_modelView;
 
 
+
+	if (drawcube1)
+	{
+		InitMatsFallCube(currentTime, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[5], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatXCube, fallingCube);
+	}
+	if (drawcube2)
+	{
+		InitMatsFallCube(currentTime, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[5], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatXCube, fallingCube);
+	}
+	if (drawwireframe)
+	{
 		WireframeOcta::myRenderCode(currentTime, Honey2);
 		WireframeOcta::myRenderCode(currentTime, Honey3);
 		WireframeOcta::myRenderCode(currentTime, Honey4);
 		WireframeOcta::myRenderCode(currentTime, Honey5);
 		WireframeOcta::myRenderCode(currentTime, Honey6);
 		WireframeOcta::myRenderCode(currentTime, Honey7);
-
-	InitMatsFallCube(currentTime, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0],RotMatXCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatZCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[5], RotMatXCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatZCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatXCube, fallingCube);
-	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatXCube, fallingCube);
+	}
+	if (drawocta1)
+	{
+				InitMatsFall(currentTime, fallingCube);
+				Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, fallingCube);
+				Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
+				Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
+				Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
+				Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
+				Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
+				Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
+	}
 	//if (staticocto)
 	//{
 	//		InitMatsFall(currentTime, fallingCube);
