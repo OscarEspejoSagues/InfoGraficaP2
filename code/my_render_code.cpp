@@ -9,7 +9,7 @@
 
 #include "GL_framework.h"
 
-#define ARRAY_SIZE 10
+#define ARRAY_SIZE 20
 
 int w, h; //variables donde guardamos la witdh y la height
 
@@ -233,6 +233,20 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			drawocta2 = false;
 			caida = 0.3f;
 			break;
+
+		case SDLK_5:
+			falling = true;
+			fallingCube = false;
+			honeycombwireframe = false;
+			staticocto = false;
+
+			drawcube1 = false;
+			drawcube2 = false;
+			drawwireframe = false;
+			drawocta1 = false;
+			drawocta2 = true;
+			caida = 0.3f;
+			break;
 		}
 
 	}
@@ -319,6 +333,16 @@ void myRenderCode(double currentTime)
 		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatZCube, fallingCube);
 		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatXCube, fallingCube);
 		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[10], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[11], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[12], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[13], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[14], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[15], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[16], RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[17], RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[18], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[19], RotMatXCube, fallingCube);
 	}
 	if (drawwireframe)
 	{
@@ -331,14 +355,26 @@ void myRenderCode(double currentTime)
 	}
 	if (drawocta1)
 	{
-				InitMatsFall(currentTime, fallingCube);
-				Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, fallingCube);
-				Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
-				Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
-				Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
-				Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
-				Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
-				Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
+		InitMatsFall(currentTime, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
+	}
+	if (drawocta2) {
+		InitMatsFall(currentTime, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[0], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[1], RotMatY, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[2], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[3], RotMatY, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[5], RotMatY, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[6], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[7], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[8], RotMatX, scale, falling);
 	}
 	//if (staticocto)
 	//{
@@ -881,8 +917,9 @@ namespace Octahedron {
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "RotMat"), 1, GL_FALSE, glm::value_ptr(rotation));
 		if (fall)
 		{
-			position.y -= currentTime*2;
+			position.y -= -caida;
 		}
+		caida -= 0.03;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
 		glUniform1f(glGetUniformLocation(myRenderProgram, "time"), (GLfloat) currentTime);
