@@ -29,13 +29,17 @@ glm::mat4 RotMatYZCube;
 glm::mat4 RotMatYXCube;
 glm::mat4 scaleCube;
 
-glm::vec4 RandomPositionsArray[ARRAY_SIZE];
+glm::vec4 RandomPositionsArray[ARRAY_SIZE]; 
+float caida = 0.5f;
 
 void InitMatsFall(double currentTime, bool fall);
 void InitMatsFallCube(double currentTime, bool fall);
 
+bool staticube = false;
+bool staticocto = false;
 bool falling = false;
-bool fallingCube = true;
+bool fallingCube = false;
+bool honeycombwireframe = false;
 
 ///////// fw decl
 
@@ -84,7 +88,7 @@ namespace MyFirstShader {
 	GLuint myShaderCompile(void);
 
 	void myCleanupCode(void);
-	void myRenderCode(double currentTime, glm::vec4 position, glm::mat4 Rotation, bool fall);
+	void myRenderCode(double currentTime, glm::vec4 position,glm::mat4 Rotation, bool fall);
 
 	GLuint myRenderProgram;
 	GLuint myVAO;
@@ -134,6 +138,15 @@ namespace ShaderValues {
 	glm::vec4 position_7_Honey = { 2.4f, -0.1f, 1.f, 1.f };
 }
 
+
+
+glm::vec4 Honey2 = { 2.3f, 2.2f, 1.f, 1.f };
+glm::vec4 Honey3 = { 0.15f, 2.2f, 1.f, 1.f };
+glm::vec4 Honey4 = { 2.3f, 0.05f, 1.f, 1.f };
+glm::vec4 Honey5 = { 0.15f, 0.05f, 1.f, 1.f };
+glm::vec4 Honey6 = { 2.3f, -2.2f, 1.f, 1.f };
+glm::vec4 Honey7 = { 0.15f, -2.2f, 1.f, 1.f };
+
 namespace RenderVars {
 	float FOV = glm::radians(65.f); //Fov
 	const float zNear = 2.f;
@@ -158,7 +171,33 @@ namespace RV = RenderVars;
 
 //Funcion que nos permite controlar los eventos de teclado, la llamamos en el MAIN
 void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
+	switch (eve.type) {
+	case SDL_KEYDOWN://controlamos que se haya pulsado una tecla
+		switch (eve.key.keysym.sym)
+		{
+		case SDLK_1://Si pulsamos la tecla 1
+			 falling = false;
+			 fallingCube = false;
+			 honeycombwireframe = false;
+			 staticocto = false;
+			 caida = 0.3f;
+			break;
+		case SDLK_2:
+			falling = false;
+			fallingCube = false;
+			honeycombwireframe = false;
+			staticocto = true;
+			break;
+		case SDLK_3:
+			falling = false;
+			fallingCube = true;
+			honeycombwireframe = false;
+			staticocto = false;
+			caida = 0.3f;
+			break;
+		}
 
+	}
 }
 
 
@@ -213,61 +252,60 @@ void myRenderCode(double currentTime)
 
 	RV::_MVP = RV::_projection * RV::_modelView;
 
-	WireframeOcta::myRenderCode(currentTime, ShaderValues::position10);
 
-	if (fallingCube)
-	{
+		WireframeOcta::myRenderCode(currentTime, Honey2);
+		WireframeOcta::myRenderCode(currentTime, Honey3);
+		WireframeOcta::myRenderCode(currentTime, Honey4);
+		WireframeOcta::myRenderCode(currentTime, Honey5);
+		WireframeOcta::myRenderCode(currentTime, Honey6);
+		WireframeOcta::myRenderCode(currentTime, Honey7);
 
-		InitMatsFallCube(currentTime, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0], RotMatXZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatXZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatYZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[5], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatXZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatYZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatYXCube, fallingCube);
+	InitMatsFallCube(currentTime, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0],RotMatXCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatZCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[5], RotMatXCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatZCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatXCube, fallingCube);
+	MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatXCube, fallingCube);
+	//if (staticocto)
+	//{
+	//		InitMatsFall(currentTime, fallingCube);
+	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, fallingCube);
+	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
+	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
+	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
+	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
+	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
+	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
+	//}
 
-	}
-	else
-	{
-		InitMatsFallCube(currentTime, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[5], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatXCube, fallingCube);
-	}
 
-	if (falling)
-	{
-		InitMatsFall(currentTime, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[0], RotMatX, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[1], RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[2], RotMatX, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[3], RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZ, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[5], RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[6], RotMatX, scale, falling);
-	}
-	else
-	{
-		InitMatsFall(currentTime, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
-	}
+	//if (falling)
+	//{
+	//	InitMatsFall(currentTime, falling);
+	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[0], RotMatX, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[1], RotMatY, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[2], RotMatX, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[3], RotMatY, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZ, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[5], RotMatY, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[6], RotMatX, scale, falling);
+	//}
+	//else
+	//{
+	//	InitMatsFall(currentTime, falling);
+	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
+	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
+	//}
 
 	ImGui::Render();
 }
@@ -473,12 +511,14 @@ namespace MyFirstShader {
 
 	void myRenderCode(double currentTime, glm::vec4 position, glm::mat4 Rotation, bool fall) {
 		glUseProgram(myRenderProgram);
-		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "vision"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
-		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "Rotation"), 1, GL_FALSE, glm::value_ptr(Rotation));
 		if (fall)
 		{
-			position.y -= currentTime * 4;
+			position.y -= -caida;
 		}
+		caida -= 0.03;
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "vision"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "Rotation"), 1, GL_FALSE, glm::value_ptr(Rotation));
+
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
 
 		//glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
@@ -512,9 +552,10 @@ namespace Octahedron {
 			"#version 330\n\
 			\n\
 			out vec4 color;\n\
+			uniform float time;										\n\
 			\n\
 			void main() {\n\
-			const vec4 colors[10] = vec4[10](vec4( 1, 0, 0, 1.0),\n\
+			vec4 colors[10] = vec4[10](vec4( sin(time),1, sin(time), 1.0),\n\
 											vec4(0,1,0, 1.0),\n\
 											vec4(0, 0, 1, 1.0),\n\
 											vec4(0.10, 0, 1, 1.0),\n\
@@ -562,7 +603,7 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices1[i]+position;			\n\
-					gl_PrimitiveID = 1;												\n\
+					gl_PrimitiveID = 0;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -576,7 +617,7 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices2[i]+position;			\n\
-					gl_PrimitiveID = 2;												\n\
+					gl_PrimitiveID = 0;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -590,7 +631,7 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices3[i]+position;			\n\
-					gl_PrimitiveID = 3;												\n\
+					gl_PrimitiveID = 0;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -605,7 +646,7 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices4[i]+position;			\n\
-					gl_PrimitiveID = 4;												\n\
+					gl_PrimitiveID = 0;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -619,7 +660,7 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices5[i]+position;			\n\
-					gl_PrimitiveID = 5;												\n\
+					gl_PrimitiveID = 0;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -633,7 +674,7 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices6[i]+position;			\n\
-					gl_PrimitiveID = 6;												\n\
+					gl_PrimitiveID = 0;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -647,7 +688,7 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices7[i]+position;			\n\
-					gl_PrimitiveID = 7;												\n\
+					gl_PrimitiveID = 0;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -660,7 +701,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices8[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 0;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -672,7 +713,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices9[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 0;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -684,7 +725,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices10[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 0;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -696,7 +737,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices11[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 0;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -708,7 +749,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices12[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 0;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				//LAT4                                                              \n\
@@ -719,7 +760,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices13[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 0;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 			}"
@@ -775,6 +816,7 @@ namespace Octahedron {
 		}
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
+		glUniform1f(glGetUniformLocation(myRenderProgram, "time"), (GLfloat) currentTime);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 }
@@ -841,7 +883,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -869,21 +911,22 @@ namespace WireframeOcta {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices2[i]+position;			\n\
-					gl_PrimitiveID = 2;												\n\
+					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.0, -1.2, 1.0),			\n\
+				vec4 vertices3[7] = vec4[7]( vec4(-0.3, 0.0, -1.2, 1.0),			\n\
 											vec4(0.3, 0.0, -1.2, 1.0),				\n\
 											vec4(0.65, 0.3, -1, 1.0),				\n\
 											vec4(0.3, 0.7, -0.7, 1.0),				\n\
 											vec4(-0.3, 0.7, -0.7, 1.0),				\n\
-											vec4(-0.65, 0.3, -1, 1.0));				\n\
-				for (int i = 0; i <6; i++)											\n\
+											vec4(-0.65, 0.3, -1, 1.0),				\n\
+											vec4(-0.3, 0.0, -1.2, 1.0));				\n\
+				for (int i = 0; i <7; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices3[i]+position;			\n\
-					gl_PrimitiveID = 3;												\n\
+					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -898,7 +941,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices4[i]+position;			\n\
-					gl_PrimitiveID = 4;												\n\
+					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -912,7 +955,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices5[i]+position;			\n\
-					gl_PrimitiveID = 5;												\n\
+					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -926,7 +969,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices6[i]+position;			\n\
-					gl_PrimitiveID = 6;												\n\
+					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -940,7 +983,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices7[i]+position;			\n\
-					gl_PrimitiveID = 7;												\n\
+					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -953,7 +996,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices8[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -965,7 +1008,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices9[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -977,7 +1020,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices10[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -989,7 +1032,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices11[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1001,7 +1044,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices12[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				//LAT4                                                              \n\
@@ -1011,7 +1054,7 @@ namespace WireframeOcta {
 				for (int i = 0; i <3; i++)											\n\
 				{																	\n\
 					gl_Position = rot*vertices13[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 			}"
@@ -1060,7 +1103,7 @@ namespace WireframeOcta {
 	void myRenderCode(double currentTime, glm::vec4 position) {
 		glUseProgram(myRenderProgram);
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rot"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
-		position.y -= currentTime * 2;
+		//position.y -= currentTime * 2;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
 		glDrawArrays(GL_LINES, 0, 3);
 	}
