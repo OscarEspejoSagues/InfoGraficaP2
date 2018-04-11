@@ -29,8 +29,9 @@ glm::mat4 RotMatYZCube;
 glm::mat4 RotMatYXCube;
 glm::mat4 scaleCube;
 
+
 glm::vec4 RandomPositionsArray[ARRAY_SIZE];
-float caida = 0.5f;
+float caida = 0.1f;
 
 void InitMatsFall(double currentTime, bool fall);
 void InitMatsFallCube(double currentTime, bool fall);
@@ -46,6 +47,10 @@ bool drawcube2 = false;
 bool drawwireframe = false;
 bool drawocta1 = false;
 bool drawocta2 = false;
+bool drawoctagreen = false;
+bool rotwireframe = false;
+
+bool greencolor;
 
 ///////// fw decl
 
@@ -111,6 +116,17 @@ namespace Octahedron {
 	GLuint myVAO;
 }
 
+namespace OctahedronGreen {
+	void myInitCode(void);
+	GLuint myShaderCompile(void);
+
+	void myCleanupCode(void);
+	void myRenderCode(double currentTime, glm::vec4 position, glm::mat4 rotation, glm::mat4 scale, bool fall);
+
+	GLuint myRenderProgram;
+	GLuint myVAO;
+}
+
 namespace WireframeOcta {
 	void myInitCode(void);
 	GLuint myShaderCompile(void);
@@ -123,21 +139,21 @@ namespace WireframeOcta {
 }
 
 namespace ShaderValues {
-	glm::vec4 position = { 2.f, 15.f, 1.f, 1.f };
-	glm::vec4 position1 = { -10.f, 15.f,1.f, 1.f };
-	glm::vec4 position2 = { 5.f, 15.f,1.f, 1.f };
-	glm::vec4 position3 = { -5.f, 15.f,1.f, 1.f };
-	glm::vec4 position4 = { 0.f, 15.f,1.f, 1.f };
-	glm::vec4 position5 = { 8.f, 15.f,1.f, 1.f };
-	glm::vec4 position6 = { -1.f, 15.f,1.f, 1.f };
-	glm::vec4 position7 = { -8.f, 15.f,1.f, 1.f };
-	glm::vec4 position8 = { -13.f, 15.f,1.f, 1.f };
-	glm::vec4 position9 = { 13.f, 15.f,1.f, 1.f };
-	glm::vec4 position10 = { 3.f, 15.f,1.f, 1.f };
+	glm::vec4 position = { 0.f, 5.f, 0.f, 0.f };
+	glm::vec4 position1 = { 0.f, 3.f,2.f, 1.f };
+	glm::vec4 position2 = { 1.f, 6.f, 0.f, 1.f };
+	glm::vec4 position3 = { -1.f, 4.f, 1.f, 1.f };
+	glm::vec4 position4 = { 2.f, 5.f, -6.f, 1.f };
+	glm::vec4 position5 = { 4.f, 9.f,1.f, 1.f };
+	glm::vec4 position6 = { -2.f, 5.f,2.f, 1.f };
+	glm::vec4 position7 = { 1.f, 2.f,0.f, 1.f };
+	glm::vec4 position8 = { -1.f, 2.f, 1.f, 1.f };
+	glm::vec4 position9 = { 4.f, 8.f,1.f, 1.f };
+	glm::vec4 position10 = { 7.f, 10.f,1.f, 1.f };
 
 	glm::vec4 position_1_Honey = { 1.f, 1.f, 1.f, 1.f };
 	glm::vec4 position_2_Honey = { 2.3f, 2.2f, 1.f, 1.f };
-	glm::vec4 position_3_Honey = { -0.45f, 1.95f, 1.f, 1.f };
+	glm::vec4 position_3_Honey = { -0.45f, 2.f, 1.f, 1.f };
 	glm::vec4 position_4_Honey = { -0.4f, -0.17f, 1.f, 1.f };
 	glm::vec4 position_5_Honey = { 0.98f, -1.f, 1.f, 1.f };
 	glm::vec4 position_6_Honey = { 0.9f, 3.1f, 1.f, 1.f };
@@ -152,6 +168,7 @@ glm::vec4 Honey4 = { 2.3f, 0.05f, 1.f, 1.f };
 glm::vec4 Honey5 = { 0.15f, 0.05f, 1.f, 1.f };
 glm::vec4 Honey6 = { 2.3f, -2.2f, 1.f, 1.f };
 glm::vec4 Honey7 = { 0.15f, -2.2f, 1.f, 1.f };
+
 
 namespace RenderVars {
 	float FOV = glm::radians(65.f); //Fov
@@ -192,19 +209,24 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			drawwireframe = false;
 			drawocta1 = false;
 			drawocta2 = false;
-			caida = 0.3f;
+			drawoctagreen = false;
+
+			caida = 0.1f;
 			break;
 		case SDLK_2:
 			falling = false;
 			fallingCube = false;
-			honeycombwireframe = true;
-			staticocto = true;
+			honeycombwireframe = false;
+			staticocto = false;
 
 			drawcube1 = false;
 			drawcube2 = false;
-			drawocta1 = false;
+			drawwireframe = false;
+			drawocta1 = true;
 			drawocta2 = false;
-			drawwireframe = true;
+			drawoctagreen = false;
+
+			caida = 0.1f;
 
 			break;
 		case SDLK_3:
@@ -218,23 +240,25 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			drawwireframe = false;
 			drawocta1 = false;
 			drawocta2 = false;
-			caida = 0.3f;
+			drawoctagreen = false;
+
+			caida = 0.1f;
 			break;
-		case SDLK_4:
+		case SDLK_6:
 			falling = false;
 			fallingCube = false;
-			honeycombwireframe = false;
-			staticocto = false;
+			honeycombwireframe = true;
+			staticocto = true;
 
 			drawcube1 = false;
 			drawcube2 = false;
-			drawwireframe = false;
-			drawocta1 = true;
+			drawocta1 = false;
 			drawocta2 = false;
-			caida = 0.3f;
+			drawwireframe = true;
+			drawoctagreen = false;
 			break;
 
-		case SDLK_5:
+		case SDLK_4:
 			falling = true;
 			fallingCube = false;
 			honeycombwireframe = false;
@@ -245,9 +269,29 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			drawwireframe = false;
 			drawocta1 = false;
 			drawocta2 = true;
-			caida = 0.3f;
+			drawoctagreen = false;
+
+			caida = 0.1f;
 			break;
+		case SDLK_5:
+			falling = true;
+			fallingCube = false;
+			honeycombwireframe = false;
+			staticocto = false;
+			drawcube1 = false;
+			drawcube2 = false;
+			drawwireframe = false;
+			drawocta1 = false;
+			drawocta2 = false;
+			drawoctagreen = true;
+			caida = 0.1f;
+			break;
+		case SDLK_7:
+			RV::panv[0] += 2;
+			break;
+
 		}
+
 
 	}
 }
@@ -260,7 +304,7 @@ void myInitCode(int width, int height)
 	srand(time(NULL));
 	FillArrayPos();
 	glViewport(0, 0, width, height);
-	glClearColor(0.2f, 0.2f, 0.2f, 1.f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.f);
 	glClearDepth(1.f);
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_DEPTH_TEST);
@@ -275,6 +319,7 @@ void myInitCode(int width, int height)
 
 	MyFirstShader::myInitCode();
 	Octahedron::myInitCode();
+	OctahedronGreen::myInitCode();
 	WireframeOcta::myInitCode();
 }
 
@@ -285,6 +330,7 @@ void myCleanupCode() {
 	//Cube::cleanupCube();
 	MyFirstShader::myCleanupCode();
 	Octahedron::myCleanupCode();
+	OctahedronGreen::myCleanupCode();
 	WireframeOcta::myCleanupCode();
 }
 
@@ -295,9 +341,13 @@ void myRenderCode(double currentTime)
 	RV::_modelView = glm::translate(RV::_modelView, glm::vec3(RV::panv[0], RV::panv[1], RV::panv[2]));
 
 	RV::_projection = glm::perspective(RV::FOV, (float)w / (float)h, RV::zNear, RV::zFar);//si no es la escena 1 tenemos vision en perspectiva
-																						  //float aux = -200.f;
-																						  //RV::_projection = glm::ortho((float)-w / aux, (float)w / aux, (float)h / aux, (float)-h / aux, 0.1f, 100.f); //camara orthonormal
-																						  //RV::_modelView = glm::rotate(glm::mat4(1.0f), 170.f, glm::vec3(1.f, 1.f, 0.f));//rotamos para tener una perspectiva 3D
+	if (drawcube2)
+	{
+		float aux = 10.f;
+		RV::_projection = glm::ortho((float)-w / aux, (float)w / aux, (float)h / aux, (float)-h / aux, 0.1f, 100.f); //camara orthonormal
+		RV::_modelView = glm::rotate(glm::mat4(1.0f), 170.f, glm::vec3(1.f, 1.f, 0.f));//rotamos para tener una perspectiva 3D
+	}
+
 
 	RV::_modelView = glm::rotate(RV::_modelView, RV::rota[1], glm::vec3(1.f, 0.f, 0.f));
 	RV::_modelView = glm::rotate(RV::_modelView, RV::rota[0], glm::vec3(0.f, 1.f, 0.f));
@@ -323,26 +373,16 @@ void myRenderCode(double currentTime)
 	if (drawcube2)
 	{
 		InitMatsFallCube(currentTime, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[0], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[2], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[5], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[7], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[8], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[9], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[10], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[11], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[12], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[13], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[14], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[15], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[16], RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[17], RotMatZCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[18], RotMatXCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, RandomPositionsArray[19], RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position, RotMatXZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position1, RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position2, RotMatYZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position3, RotMatXCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position4, RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position5, RotMatYX, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position6, RotMatYCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position7, RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position8, RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position9, RotMatXCube, fallingCube);
 	}
 	if (drawwireframe)
 	{
@@ -356,62 +396,58 @@ void myRenderCode(double currentTime)
 	if (drawocta1)
 	{
 		InitMatsFall(currentTime, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatXZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatYZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatYX, scale, falling);
 		Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatYZ, scale, falling);
 		Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
 		Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
 	}
 	if (drawocta2) {
 		InitMatsFall(currentTime, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[0], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[0], RotMatXZ, scale, falling);
 		Octahedron::myRenderCode(currentTime, RandomPositionsArray[1], RotMatY, scale, falling);
 		Octahedron::myRenderCode(currentTime, RandomPositionsArray[2], RotMatX, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[3], RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[3], RotMatYZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[4], RotMatYX, scale, falling);
 		Octahedron::myRenderCode(currentTime, RandomPositionsArray[5], RotMatY, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[6], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYX, scale, falling);
 		Octahedron::myRenderCode(currentTime, RandomPositionsArray[7], RotMatX, scale, falling);
-		Octahedron::myRenderCode(currentTime, RandomPositionsArray[8], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[8], RotMatYZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[9], RotMatYX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[10], RotMatY, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[11], RotMatYX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[12], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[13], RotMatYZ, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[14], RotMatY, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[15], RotMatYX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[16], RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, RandomPositionsArray[17], RotMatYZ, scale, falling);
 	}
-	//if (staticocto)
-	//{
-	//		InitMatsFall(currentTime, fallingCube);
-	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, fallingCube);
-	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
-	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
-	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
-	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
-	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
-	//		Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
-	//}
+	if (drawoctagreen)
+	{
+		InitMatsFall(currentTime, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[0], RotMatX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[1], RotMatYZ, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[2], RotMatXZ, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[3], RotMatY, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZ, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[5], RotMatYX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[6], RotMatYX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[7], RotMatX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[8], RotMatYZ, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[9], RotMatZ, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[10], RotMatYX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[11], RotMatYX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[12], RotMatX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[13], RotMatY, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[14], RotMatYX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[15], RotMatYX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[16], RotMatX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[17], RotMatY, scale, falling);
 
-
-	//if (falling)
-	//{
-	//	InitMatsFall(currentTime, falling);
-	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[0], RotMatX, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[1], RotMatY, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[2], RotMatX, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[3], RotMatY, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[4], RotMatZ, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[5], RotMatY, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, RandomPositionsArray[6], RotMatX, scale, falling);
-	//}
-	//else
-	//{
-	//	InitMatsFall(currentTime, falling);
-	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_1_Honey, RotMatX, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_2_Honey, RotMatY, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_3_Honey, RotMatX, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_4_Honey, RotMatY, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_5_Honey, RotMatZ, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_6_Honey, RotMatY, scale, falling);
-	//	Octahedron::myRenderCode(currentTime, ShaderValues::position_7_Honey, RotMatX, scale, falling);
-	//}
-
+	}
 	ImGui::Render();
 }
 
@@ -618,10 +654,18 @@ namespace MyFirstShader {
 		glUseProgram(myRenderProgram);
 		if (fall)
 		{
+			glm::mat4 fixvis = { 1,0,0,0,
+				0,1,0,0,
+				0,0,1,0,
+				0,0,0,1 };
+			glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "vision"), 1, GL_FALSE, glm::value_ptr(fixvis));
 			position.y -= -caida;
 		}
-		caida -= 0.03;
-		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "vision"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
+		else
+		{
+			glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "vision"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
+		}
+		caida -= 0.007;
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "Rotation"), 1, GL_FALSE, glm::value_ptr(Rotation));
 
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
@@ -682,118 +726,119 @@ namespace Octahedron {
 			uniform mat4 scale;														\n\
             uniform mat4 RotMat;													\n\
 			uniform vec4 position;													\n\
+			uniform float color;													\n\
 			void main()																\n\
 			{																		\n\
 				//ROJO                                                              \n\
-				vec4 vertices[6] = vec4[6]( vec4(0.3, 0.75, 0.0, 1.0),				\n\
-											vec4(-0.3, 0.75, 0.0, 1.0),				\n\
-											vec4(0.65, 0.25, 0.3, 1.0),				\n\
-											vec4(-0.65, 0.25, 0.3, 1.0),				\n\
+				vec4 vertices[6] = vec4[6]( vec4(0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(-0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(0.65, 0.3, 0.3, 1.0),				\n\
+											vec4(-0.65, 0.3, 0.3, 1.0),				\n\
 											vec4(0.3, 0.0, 0.6, 1.0),				\n\
 											vec4(-0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				//VERDE                                                             \n\
-				vec4 vertices1[6] = vec4[6]( vec4(-0.3, 0.75, 0.0, 1.0),				\n\
-											vec4(-0.3, 0.75, -0.7, 1.0),				\n\
-											vec4(-0.65, 0.25, 0.3, 1.0),				\n\
-											vec4(-0.65, 0.25, -1, 1.0),				\n\
+				vec4 vertices1[6] = vec4[6]( vec4(-0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(-0.3, 0.7, -0.7, 1.0),				\n\
+											vec4(-0.65, 0.3, 0.3, 1.0),				\n\
+											vec4(-0.65, 0.3, -1, 1.0),				\n\
 											vec4(-0.9, 0.0, 0.0, 1.0),				\n\
 											vec4(-0.9, 0.0, -0.7, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices1[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 2;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				////AZUL                                                            \n\
-				vec4 vertices2[6] = vec4[6]( vec4(0.3, 0.75, -0.7, 1.0),			    \n\
-											vec4(0.3, 0.75, 0.0, 1.0),		        \n\
-											vec4(0.65, 0.25, -1, 1.0),		        \n\
-											vec4(0.65, 0.25, 0.3, 1.0),		        \n\
+				vec4 vertices2[6] = vec4[6]( vec4(0.3, 0.7, -0.7, 1.0),			    \n\
+											vec4(0.3, 0.7, 0.0, 1.0),		        \n\
+											vec4(0.65, 0.3, -1, 1.0),		        \n\
+											vec4(0.65, 0.3, 0.3, 1.0),		        \n\
 											vec4(0.9, 0.0, -0.8, 1.0),		        \n\
 											vec4(0.9, 0.0, 0.0, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices2[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 3;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.75, -0.7, 1.0),			\n\
-											vec4(0.3, 0.75, -0.7, 1.0),				\n\
-											vec4(-0.65, 0.25, -1, 1.0),				\n\
-											vec4(0.65, 0.25, -1, 1.0),				\n\
+				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.7, -0.7, 1.0),			\n\
+											vec4(0.3, 0.7, -0.7, 1.0),				\n\
+											vec4(-0.65, 0.3, -1, 1.0),				\n\
+											vec4(0.65, 0.3, -1, 1.0),				\n\
 											vec4(-0.3, 0.0, -1.2, 1.0),				\n\
 											vec4(0.3, 0.0, -1.2, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices3[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 4;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				////PARTE INFERIOR													\n\
 				//ROJO                                                              \n\
-				vec4 vertices4[6] = vec4[6]( vec4(-0.3, -0.75, 0.0, 1.0),			\n\
-											vec4(0.3, -0.75, 0.0, 1.0),				\n\
-											vec4(-0.65, -0.25, 0.3, 1.0),			\n\
-											vec4(0.65, -0.25, 0.3, 1.0),				\n\
+				vec4 vertices4[6] = vec4[6]( vec4(-0.3, -0.7, 0.0, 1.0),			\n\
+											vec4(0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
+											vec4(0.65, -0.3, 0.3, 1.0),				\n\
 											vec4(-0.3, 0.0, 0.6, 1.0),				\n\
 											vec4(0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices4[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 5;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				//VERDE                                                             \n\
-				vec4 vertices5[6] = vec4[6]( vec4(-0.3, -0.75, -0.7, 1.0),			\n\
-											vec4(-0.3, -0.75, 0.0, 1.0),				\n\
-											vec4(-0.65, -0.25, -1, 1.0),				\n\
-											vec4(-0.65, -0.25, 0.3, 1.0),			\n\
+				vec4 vertices5[6] = vec4[6]( vec4(-0.3, -0.7, -0.7, 1.0),			\n\
+											vec4(-0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(-0.65, -0.3, -1, 1.0),				\n\
+											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
 											vec4(-0.9, 0.0, -0.7, 1.0),				\n\
 											vec4(-0.9, 0.0, 0.0, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices5[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 6;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				////AZUL                                                            \n\
-				vec4 vertices6[6] = vec4[6]( vec4(0.3, -0.75, 0.0, 1.0),				\n\
-											vec4(0.3, -0.75, -0.7, 1.0),		        \n\
-											vec4(0.65, -0.25, 0.3, 1.0),		        \n\
-											vec4(0.65, -0.25, -1, 1.0),		        \n\
+				vec4 vertices6[6] = vec4[6]( vec4(0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(0.3, -0.7, -0.7, 1.0),		        \n\
+											vec4(0.65, -0.3, 0.3, 1.0),		        \n\
+											vec4(0.65, -0.3, -1, 1.0),		        \n\
 											vec4(0.9, 0.0, 0.0, 1.0),		        \n\
 											vec4(0.9, 0.0, -0.8, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices6[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 7;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
 				//AMARILLO                                                          \n\
-				vec4 vertices7[6] = vec4[6]( vec4(0.3, -0.75, -0.7, 1.0),			\n\
-											vec4(-0.3, -0.75, -0.7, 1.0),			\n\
-											vec4(0.65, -0.25, -1, 1.0),				\n\
-											vec4(-0.65, -0.25, -1, 1.0),				\n\
+				vec4 vertices7[6] = vec4[6]( vec4(0.3, -0.7, -0.7, 1.0),			\n\
+											vec4(-0.3, -0.7, -0.7, 1.0),			\n\
+											vec4(0.65, -0.3, -1, 1.0),				\n\
+											vec4(-0.65, -0.3, -1, 1.0),				\n\
 											vec4(0.3, 0.0, -1.2, 1.0),				\n\
 											vec4(-0.3, 0.0, -1.2, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices7[i]+position;			\n\
-					gl_PrimitiveID = 0;												\n\
+					gl_PrimitiveID = 8;												\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -806,7 +851,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices8[i]+position;			\n\
-					gl_PrimitiveID = 0;											\n\
+					gl_PrimitiveID = 9;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -818,7 +863,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices9[i]+position;			\n\
-					gl_PrimitiveID = 0;											\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -830,7 +875,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices10[i]+position;			\n\
-					gl_PrimitiveID = 0;											\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -842,7 +887,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices11[i]+position;			\n\
-					gl_PrimitiveID = 0;											\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -854,7 +899,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices12[i]+position;			\n\
-					gl_PrimitiveID = 0;											\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 				//LAT4                                                              \n\
@@ -865,7 +910,7 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices13[i]+position;			\n\
-					gl_PrimitiveID = 0;											\n\
+					gl_PrimitiveID = 10;											\n\
 					EmitVertex();													\n\
 				}																	\n\
 			}"
@@ -919,7 +964,304 @@ namespace Octahedron {
 		{
 			position.y -= -caida;
 		}
-		caida -= 0.03;
+		caida -= 0.009;
+		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
+		glUniform1f(glGetUniformLocation(myRenderProgram, "time"), (GLfloat)currentTime);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+	}
+}
+
+namespace OctahedronGreen {
+	void myCleanupCode() {
+		glDeleteVertexArrays(1, &myVAO);
+		glDeleteProgram(myRenderProgram);
+	}
+
+
+	//EX0.2
+
+	GLuint myShaderCompile(void) {
+		static const GLchar * vertex_shader_source[] =
+		{
+			"#version 330										\n\
+		\n\
+		void main() {\n\
+		const vec4 vertices[3] = vec4[3](vec4(0.0, 1.0, 0.0, 1.0),\n\
+									   vec4(-1.0, 0.0, 1.0, 1.0),\n\
+										vec4( 1.0, 0.0, 1.0, 1.0));\n\
+		gl_Position = vertices[gl_VertexID];\n\
+		}"
+		};
+		static const GLchar * fragment_shader_source[] =
+		{
+			"#version 330\n\
+			\n\
+			out vec4 color;\n\
+			uniform float time;										\n\
+			\n\
+			void main() {\n\
+			vec4 colors[10] = vec4[10](vec4( sin(time),1, sin(time), 1.0),\n\
+											vec4(0,1,0, 1.0),\n\
+											vec4(0, 0, 1, 1.0),\n\
+											vec4(0.10, 0, 1, 1.0),\n\
+											vec4( 1, 0.40, 0, 1.0),\n\
+											vec4( 0, 0.40, 0.40, 1.0),\n\
+											vec4( 0.1, 0.3, 0.1, 1.0),\n\
+											vec4( 0.9, 0.2, 0.4, 1.0),\n\
+											vec4( 0.6, 0.3, 0.5, 1.0),\n\
+											vec4( 1.0, 1.0, 1.0, 1.0));\n\
+			color = colors[gl_PrimitiveID ];\n\
+			}"
+		};
+
+		static const GLchar * geom_shader_source[] = {
+			"#version 330															\n\
+			layout(triangles) in;													\n\
+			layout(triangle_strip, max_vertices = 72) out;							\n\
+			uniform mat4 rot;														\n\
+			uniform mat4 scale;														\n\
+            uniform mat4 RotMat;													\n\
+			uniform vec4 position;													\n\
+			uniform float color;													\n\
+			void main()																\n\
+			{																		\n\
+				//ROJO                                                              \n\
+				vec4 vertices[6] = vec4[6]( vec4(0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(-0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(0.65, 0.3, 0.3, 1.0),				\n\
+											vec4(-0.65, 0.3, 0.3, 1.0),				\n\
+											vec4(0.3, 0.0, 0.6, 1.0),				\n\
+											vec4(-0.3, 0.0, 0.6, 1.0));				\n\
+				for (int i = 0; i <6; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices[i]+position;			\n\
+					gl_PrimitiveID = 0;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//VERDE                                                             \n\
+				vec4 vertices1[6] = vec4[6]( vec4(-0.3, 0.7, 0.0, 1.0),				\n\
+											vec4(-0.3, 0.7, -0.7, 1.0),				\n\
+											vec4(-0.65, 0.3, 0.3, 1.0),				\n\
+											vec4(-0.65, 0.3, -1, 1.0),				\n\
+											vec4(-0.9, 0.0, 0.0, 1.0),				\n\
+											vec4(-0.9, 0.0, -0.7, 1.0));			\n\
+				for (int i = 0; i <6; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices1[i]+position;			\n\
+					gl_PrimitiveID = 0;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				////AZUL                                                            \n\
+				vec4 vertices2[6] = vec4[6]( vec4(0.3, 0.7, -0.7, 1.0),			    \n\
+											vec4(0.3, 0.7, 0.0, 1.0),		        \n\
+											vec4(0.65, 0.3, -1, 1.0),		        \n\
+											vec4(0.65, 0.3, 0.3, 1.0),		        \n\
+											vec4(0.9, 0.0, -0.8, 1.0),		        \n\
+											vec4(0.9, 0.0, 0.0, 1.0));		        \n\
+				for (int i = 0; i <6; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices2[i]+position;			\n\
+					gl_PrimitiveID = 0;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//AMARILLO                                                          \n\
+				vec4 vertices3[6] = vec4[6]( vec4(-0.3, 0.7, -0.7, 1.0),			\n\
+											vec4(0.3, 0.7, -0.7, 1.0),				\n\
+											vec4(-0.65, 0.3, -1, 1.0),				\n\
+											vec4(0.65, 0.3, -1, 1.0),				\n\
+											vec4(-0.3, 0.0, -1.2, 1.0),				\n\
+											vec4(0.3, 0.0, -1.2, 1.0));				\n\
+				for (int i = 0; i <6; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices3[i]+position;			\n\
+					gl_PrimitiveID = 0;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				////PARTE INFERIOR													\n\
+				//ROJO                                                              \n\
+				vec4 vertices4[6] = vec4[6]( vec4(-0.3, -0.7, 0.0, 1.0),			\n\
+											vec4(0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
+											vec4(0.65, -0.3, 0.3, 1.0),				\n\
+											vec4(-0.3, 0.0, 0.6, 1.0),				\n\
+											vec4(0.3, 0.0, 0.6, 1.0));				\n\
+				for (int i = 0; i <6; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices4[i]+position;			\n\
+					gl_PrimitiveID = 0;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//VERDE                                                             \n\
+				vec4 vertices5[6] = vec4[6]( vec4(-0.3, -0.7, -0.7, 1.0),			\n\
+											vec4(-0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(-0.65, -0.3, -1, 1.0),				\n\
+											vec4(-0.65, -0.3, 0.3, 1.0),			\n\
+											vec4(-0.9, 0.0, -0.7, 1.0),				\n\
+											vec4(-0.9, 0.0, 0.0, 1.0));				\n\
+				for (int i = 0; i <6; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices5[i]+position;			\n\
+					gl_PrimitiveID = 0;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				////AZUL                                                            \n\
+				vec4 vertices6[6] = vec4[6]( vec4(0.3, -0.7, 0.0, 1.0),				\n\
+											vec4(0.3, -0.7, -0.7, 1.0),		        \n\
+											vec4(0.65, -0.3, 0.3, 1.0),		        \n\
+											vec4(0.65, -0.3, -1, 1.0),		        \n\
+											vec4(0.9, 0.0, 0.0, 1.0),		        \n\
+											vec4(0.9, 0.0, -0.8, 1.0));		        \n\
+				for (int i = 0; i <6; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices6[i]+position;			\n\
+					gl_PrimitiveID = 0;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//AMARILLO                                                          \n\
+				vec4 vertices7[6] = vec4[6]( vec4(0.3, -0.7, -0.7, 1.0),			\n\
+											vec4(-0.3, -0.7, -0.7, 1.0),			\n\
+											vec4(0.65, -0.3, -1, 1.0),				\n\
+											vec4(-0.65, -0.3, -1, 1.0),				\n\
+											vec4(0.3, 0.0, -1.2, 1.0),				\n\
+											vec4(-0.3, 0.0, -1.2, 1.0));			\n\
+				for (int i = 0; i <6; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices7[i]+position;			\n\
+					gl_PrimitiveID = 0;												\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//CUADRADOS															\n\
+				//TOP                                                               \n\
+					vec4 vertices8[4] = vec4[4]( vec4(0.3, 0.7, 0.0, 1.0),			\n\
+										vec4(0.3, 0.7, -0.7, 1.0),					\n\
+										vec4(-0.3, 0.7, 0.0, 1.0),					\n\
+										vec4(-0.3, 0.7, -0.7, 1.0));				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices8[i]+position;			\n\
+					gl_PrimitiveID = 0;											\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//BOT                                                               \n\
+					vec4 vertices9[4] = vec4[4]( vec4(-0.3, -0.7, 0.0, 1.0),		\n\
+										vec4(-0.3, -0.7, -0.7, 1.0),				\n\
+										vec4(0.3, -0.7, 0.0, 1.0),					\n\
+										vec4(0.3, -0.7, -0.7, 1.0));				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices9[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//LAT1                                                              \n\
+					vec4 vertices10[4] = vec4[4]( vec4(-0.65, 0.3, 0.3, 1.0),		\n\
+										vec4(-0.9, 0.0, 0.0, 1.0),					\n\
+										vec4(-0.3, 0.0, 0.6, 1.0),					\n\
+										vec4(-0.65, -0.3, 0.3, 1.0));				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices10[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//LAT2                                                              \n\
+					vec4 vertices11[4] = vec4[4]( vec4(0.65, 0.3, 0.3, 1.0),		\n\
+										vec4(0.3, 0.0, 0.6, 1.0),					\n\
+										vec4(0.9, 0.0, 0.0, 1.0),					\n\
+										vec4(0.65, -0.3, 0.3, 1.0));				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices11[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
+					EmitVertex();													\n\
+				}																	\n\
+				EndPrimitive();														\n\
+				//LAT3                                                              \n\
+					vec4 vertices12[4] = vec4[4]( vec4(0.65, 0.3, -1, 1.0),			\n\
+										vec4(0.9, 0.0, -0.8, 1.0),					\n\
+										vec4(0.3, 0.0, -1.2, 1.0),					\n\
+										vec4(0.65, -0.3, -1, 1.0));					\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices12[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
+					EmitVertex();													\n\
+				}																	\n\
+				//LAT4                                                              \n\
+					vec4 vertices13[4] = vec4[4]( vec4(-0.65, 0.3, -1, 1.0),		\n\
+										vec4(-0.3, 0.0, -1.2, 1.0),					\n\
+										vec4(-0.9, 0.0, -0.7, 1.0),					\n\
+										vec4(-0.65, -0.3, -1, 1.0));				\n\
+				for (int i = 0; i <4; i++)											\n\
+				{																	\n\
+					gl_Position = rot*RotMat*scale*vertices13[i]+position;			\n\
+					gl_PrimitiveID = 10;											\n\
+					EmitVertex();													\n\
+				}																	\n\
+			}"
+		};
+
+
+		GLuint vertex_shader;
+		GLuint fragment_shader;
+		GLuint geom_shader;
+		GLuint program;
+
+		vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+		glCompileShader(vertex_shader);
+
+		geom_shader = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(geom_shader, 1, geom_shader_source, NULL);
+		glCompileShader(geom_shader);
+
+		fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+		glCompileShader(fragment_shader);
+
+		program = glCreateProgram();
+		glAttachShader(program, vertex_shader);
+		glAttachShader(program, fragment_shader);
+		glAttachShader(program, geom_shader);
+		glLinkProgram(program);
+
+		glDeleteShader(vertex_shader);
+		glDeleteShader(fragment_shader);
+
+		return program;
+	}
+
+
+	void  myInitCode(void)
+	{
+
+		myRenderProgram = myShaderCompile();
+		glCreateVertexArrays(1, &myVAO);
+		glBindVertexArray(myVAO);
+
+	}
+
+	void myRenderCode(double currentTime, glm::vec4 position, glm::mat4 rotation, glm::mat4 scale, bool fall) {
+		glUseProgram(myRenderProgram);
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "rot"), 1, GL_FALSE, glm::value_ptr(RV::_MVP));
+		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "RotMat"), 1, GL_FALSE, glm::value_ptr(rotation));
+		if (fall)
+		{
+			position.y -= -caida;
+		}
+		caida -= 0.009;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
 		glUniform1f(glGetUniformLocation(myRenderProgram, "time"), (GLfloat)currentTime);
