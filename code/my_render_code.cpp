@@ -168,6 +168,9 @@ glm::vec4 Honey4 = { 2.3f, 0.05f, 1.f, 1.f };
 glm::vec4 Honey5 = { 0.15f, 0.05f, 1.f, 1.f };
 glm::vec4 Honey6 = { 2.3f, -2.2f, 1.f, 1.f };
 glm::vec4 Honey7 = { 0.15f, -2.2f, 1.f, 1.f };
+glm::vec4 Honey8 = { 4.3f, 2.2f, 1.f, 1.f };
+glm::vec4 Honey9 = { 4.3f, 0.05f, 1.f, 1.f };
+glm::vec4 Honey10 = { 4.3f, -2.2f, 1.f, 1.f };
 
 
 namespace RenderVars {
@@ -287,7 +290,7 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			caida = 0.1f;
 			break;
 		case SDLK_7:
-			RV::panv[0] += 2;
+
 			break;
 
 		}
@@ -380,7 +383,7 @@ void myRenderCode(double currentTime)
 		MyFirstShader::myRenderCode(currentTime, ShaderValues::position4, RotMatZCube, fallingCube);
 		MyFirstShader::myRenderCode(currentTime, ShaderValues::position5, RotMatYX, fallingCube);
 		MyFirstShader::myRenderCode(currentTime, ShaderValues::position6, RotMatYCube, fallingCube);
-		MyFirstShader::myRenderCode(currentTime, ShaderValues::position7, RotMatZCube, fallingCube);
+		MyFirstShader::myRenderCode(currentTime, ShaderValues::position7, RotMatYZCube, fallingCube);
 		MyFirstShader::myRenderCode(currentTime, ShaderValues::position8, RotMatZCube, fallingCube);
 		MyFirstShader::myRenderCode(currentTime, ShaderValues::position9, RotMatXCube, fallingCube);
 	}
@@ -392,6 +395,9 @@ void myRenderCode(double currentTime)
 		WireframeOcta::myRenderCode(currentTime, Honey5);
 		WireframeOcta::myRenderCode(currentTime, Honey6);
 		WireframeOcta::myRenderCode(currentTime, Honey7);
+		WireframeOcta::myRenderCode(currentTime, Honey8);
+		WireframeOcta::myRenderCode(currentTime, Honey9);
+		WireframeOcta::myRenderCode(currentTime, Honey10);
 	}
 	if (drawocta1)
 	{
