@@ -50,6 +50,7 @@ bool drawocta1 = false;
 bool drawocta2 = false;
 bool drawoctagreen = false;
 bool rotwireframe = false;
+bool vel6 = false;
 
 bool greencolor;
 
@@ -180,27 +181,32 @@ namespace ShaderValues {
 	glm::vec4 pos17 = { -0.1f, 2.2f, 0.f,0 };
 	glm::vec4 pos18 = { 0.25,0.25,0,0 };
 	glm::vec4 pos19 = { -0.25,0.25,0,0 };
+
+	glm::vec4 Honey1 = { 0.f, 13.f, -15.f, 1.f };
+	glm::vec4 Honey2 = { 1.7f, 13.f, -15.f, 1.f };
+	glm::vec4 Honey3 = { -1.7f, 13.f, -15.f, 1.f };
+	glm::vec4 Honey4 = { 1.7f, 14.4f, -15.f, 1.f };
+	glm::vec4 Honey5 = { 0.f, 14.4f, -15.f, 1.f };
+	glm::vec4 Honey6 = { -1.7f, 14.4f, -15.f, 1.f };
+	glm::vec4 Honey7 = { 0.f, 15.8f, -15.f, 1.f };
+	glm::vec4 Honey8 = { 1.7f, 15.8f, -15.f, 1.f };
+	glm::vec4 Honey9 = { -1.7f, 15.8f, -15.f, 1.f };
+	glm::vec4 Honey10 = { 0.f, 13.f, -13.f, 1.f };
+	glm::vec4 Honey11 = { 1.7f, 13.f, -13.f, 1.f };
+	glm::vec4 Honey12 = { -1.7f, 13.f, -13.f, 1.f };
+	glm::vec4 Honey13 = { 1.7f, 14.4f, -13.f, 1.f };
+	glm::vec4 Honey14 = { 0.f, 14.4f, -13.f, 1.f };
+	glm::vec4 Honey15 = { -1.7f, 14.4f, -13.f, 1.f };
+	glm::vec4 Honey16 = { 0.f, 15.8f, -13.f, 1.f };
+	glm::vec4 Honey17 = { 1.7f, 15.8f, -13.f, 1.f };
+	glm::vec4 Honey18 = { -1.7f, 15.8f, -13.f, 1.f };
+
+	glm::vec4 falling01 = { 0.f, 0.f, -1.f, 1.f };
+	glm::vec4 falling02 = { 0.25f, 0.f, -0.1f, 1.f };
 }
 
 
-glm::vec4 Honey1 = { 0.f, 0.f, -15.f, 1.f };
-glm::vec4 Honey2 = { 1.7f, 0.f, -15.f, 1.f };
-glm::vec4 Honey3 = {-1.7f, 0.f, -15.f, 1.f };
-glm::vec4 Honey4 = { 1.7f, 1.4f, -15.f, 1.f };
-glm::vec4 Honey5 = { 0.f, 1.4f, -15.f, 1.f };
-glm::vec4 Honey6 = { -1.7f, 1.4f, -15.f, 1.f };
-glm::vec4 Honey7 = { 0.f, 2.8f, -15.f, 1.f };
-glm::vec4 Honey8 = { 1.7f, 2.8f, -15.f, 1.f };
-glm::vec4 Honey9 = { -1.7f, 2.8f, -15.f, 1.f };
-glm::vec4 Honey10 = { 0.f, 0.f, -13.f, 1.f };
-glm::vec4 Honey11 = { 1.7f, 0.f, -13.f, 1.f };
-glm::vec4 Honey12 = { -1.7f, 0.f, -13.f, 1.f };
-glm::vec4 Honey13 = { 1.7f, 1.4f, -13.f, 1.f };
-glm::vec4 Honey14 = { 0.f, 1.4f, -13.f, 1.f };
-glm::vec4 Honey15 = { -1.7f, 1.4f, -13.f, 1.f };
-glm::vec4 Honey16 = { 0.f, 2.8f, -13.f, 1.f };
-glm::vec4 Honey17 = { 1.7f, 2.8f, -13.f, 1.f };
-glm::vec4 Honey18 = { -1.7f, 2.8f, -13.f, 1.f };
+
 
 
 namespace RenderVars {
@@ -233,6 +239,7 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 		{
 		case SDLK_1://Si pulsamos la tecla 1
 			FillArrayPos();
+			vel6 = false;
 			falling = false;
 			fallingCube = false;
 			honeycombwireframe = false;
@@ -248,6 +255,7 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			caida = 0.1f;
 			break;
 		case SDLK_2:
+			vel6 = false;
 			falling = false;
 			fallingCube = false;
 			honeycombwireframe = false;
@@ -264,6 +272,7 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 
 			break;
 		case SDLK_3:
+			vel6 = false;
 			falling = false;
 			fallingCube = true;
 			honeycombwireframe = false;
@@ -279,10 +288,11 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			caida = 0.1f;
 			break;
 		case SDLK_6:
-			falling = false;
+			falling = true;
 			fallingCube = false;
 			honeycombwireframe = true;
 			staticocto = true;
+			vel6 = true;
 
 			drawcube1 = false;
 			drawcube2 = false;
@@ -290,10 +300,12 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			drawocta2 = false;
 			drawwireframe = true;
 			drawoctagreen = false;
+			caida = 0.1f;
 			break;
 
 		case SDLK_4:
 			FillArrayPos();
+			vel6 = false;
 			falling = true;
 			fallingCube = false;
 			honeycombwireframe = false;
@@ -310,6 +322,7 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 			break;
 		case SDLK_5:
 			FillArrayPos();
+			vel6 = false;
 			falling = true;
 			fallingCube = false;
 			honeycombwireframe = false;
@@ -454,24 +467,37 @@ void myRenderCode(double currentTime)
 	}
 	if (drawwireframe)
 	{
-		WireframeOcta::myRenderCode(currentTime, Honey1);
-		WireframeOcta::myRenderCode(currentTime, Honey2);
-		WireframeOcta::myRenderCode(currentTime, Honey3);
-		WireframeOcta::myRenderCode(currentTime, Honey4);
-		WireframeOcta::myRenderCode(currentTime, Honey5);
-		WireframeOcta::myRenderCode(currentTime, Honey6);
-		WireframeOcta::myRenderCode(currentTime, Honey7);
-		WireframeOcta::myRenderCode(currentTime, Honey8);
-		WireframeOcta::myRenderCode(currentTime, Honey9);
-		WireframeOcta::myRenderCode(currentTime, Honey10);
-		WireframeOcta::myRenderCode(currentTime, Honey11);
-		WireframeOcta::myRenderCode(currentTime, Honey12);
-		WireframeOcta::myRenderCode(currentTime, Honey13);
-		WireframeOcta::myRenderCode(currentTime, Honey14);
-		WireframeOcta::myRenderCode(currentTime, Honey15);
-		WireframeOcta::myRenderCode(currentTime, Honey16);
-		WireframeOcta::myRenderCode(currentTime, Honey17);
-		WireframeOcta::myRenderCode(currentTime, Honey18);
+		RotMatX = glm::mat4{
+			1.f, 0.f, 0.f, 0.f,
+			0.f, (float)cos(currentTime),(float)sin(currentTime), 0.f,
+			0.f, (float)-sin(currentTime), (float)cos(currentTime), 0.f,
+			0.f, 0.f, 0.f, 1.f
+		};
+		scale = { 1.f, 0.f, 0.f, 0.f,
+			0.0f, 1.f, 0.f, 0.f,
+			0.0f, 0.f, 1.f, 0.f,
+			0.0f, 0.f, 0.f, 1.f, 
+		};
+		Octahedron::myRenderCode(currentTime, ShaderValues::falling01, RotMatX, scale, falling);
+		Octahedron::myRenderCode(currentTime, ShaderValues::falling02, RotMatX, scale, falling);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey1);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey2);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey3);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey4);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey5);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey6);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey7);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey8);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey9);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey10);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey11);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey12);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey13);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey14);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey15);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey16);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey17);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey18);
 
 	}
 	if (drawocta1)
@@ -511,12 +537,11 @@ void myRenderCode(double currentTime)
 	}
 	if (drawoctagreen)
 	{
-		InitMatsFall(currentTime, falling);
+		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos, RotMatX, scale, falling);
 		scale = { 1.f, 0.f, 0.f, 0.f,
 			0.0f, 1.f, 0.f, 0.f,
 			0.0f, 0.f, 1.f, 0.f,
 			0.0f, 0.f, 0.f, 1.f, };
-		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos, RotMatX, scale, falling);
 		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos1, RotMatYZ, scale, falling);
 		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos2, RotMatXZ, scale, falling);
 		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos3, RotMatY, scale, falling);
@@ -1059,6 +1084,10 @@ namespace Octahedron {
 		if (fall)
 		{
 			position.y -= -caida;
+		}
+		if (vel6)
+		{
+			caida -= 0.009;
 		}
 		caida -= 0.0009;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
