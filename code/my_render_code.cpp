@@ -32,6 +32,7 @@ glm::mat4 scaleCube;
 
 glm::vec4 RandomPositionsArray[ARRAY_SIZE];
 float caida = 0.1f;
+float sumatorio_caida = 0.f;
 
 void InitMatsFall(double currentTime, bool fall);
 void InitMatsFallCube(double currentTime, bool fall);
@@ -452,6 +453,12 @@ void myRenderCode(double currentTime)
 		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[15], RotMatYX, scale, falling);
 		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[16], RotMatX, scale, falling);
 		OctahedronGreen::myRenderCode(currentTime, RandomPositionsArray[17], RotMatY, scale, falling);
+
+		if (sumatorio_caida >= 21000)
+		{
+			drawoctagreen = false;
+		}
+
 
 	}
 	ImGui::Render();
@@ -1007,7 +1014,7 @@ namespace OctahedronGreen {
 			uniform float time;										\n\
 			\n\
 			void main() {\n\
-			vec4 colors[10] = vec4[10](vec4( sin(time),1, sin(time), 1.0),\n\
+			vec4 colors[10] = vec4[10](vec4( 1,1,1, 1.0),\n\
 											vec4(0,1,0, 1.0),\n\
 											vec4(0, 0, 1, 1.0),\n\
 											vec4(0.10, 0, 1, 1.0),\n\
@@ -1030,6 +1037,7 @@ namespace OctahedronGreen {
             uniform mat4 RotMat;													\n\
 			uniform vec4 position;													\n\
 			uniform float color;													\n\
+			uniform float sumatorio_caida;											\n\
 			void main()																\n\
 			{																		\n\
 				//ROJO                                                              \n\
@@ -1042,7 +1050,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices[i]+position;			\n\
+					if(sumatorio_caida>=15000.f){									\n\
 					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1056,7 +1069,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices1[i]+position;			\n\
+					if(sumatorio_caida>=15000.f){									\n\
 					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1067,10 +1085,15 @@ namespace OctahedronGreen {
 											vec4(0.65, 0.3, 0.3, 1.0),		        \n\
 											vec4(0.9, 0.0, -0.8, 1.0),		        \n\
 											vec4(0.9, 0.0, 0.0, 1.0));		        \n\
-				for (int i = 0; i <6; i++)											\n\
+			for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices2[i]+position;			\n\
+					if(sumatorio_caida>=15000.f){									\n\
 					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1084,7 +1107,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices3[i]+position;			\n\
+					if(sumatorio_caida>=15000.f){									\n\
 					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1099,10 +1127,14 @@ namespace OctahedronGreen {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices4[i]+position;			\n\
+					if(sumatorio_caida>=15000.f){									\n\
 					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
-				EndPrimitive();														\n\
 				//VERDE                                                             \n\
 				vec4 vertices5[6] = vec4[6]( vec4(-0.3, -0.7, -0.7, 1.0),			\n\
 											vec4(-0.3, -0.7, 0.0, 1.0),				\n\
@@ -1113,7 +1145,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices5[i]+position;			\n\
+					if(sumatorio_caida>=15000.f){									\n\
 					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1127,7 +1164,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices6[i]+position;			\n\
+					if(sumatorio_caida>=15000.f){									\n\
 					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1141,7 +1183,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices7[i]+position;			\n\
+					if(sumatorio_caida>=15000.f){									\n\
 					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1154,7 +1201,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices8[i]+position;			\n\
-					gl_PrimitiveID = 0;											\n\
+					if(sumatorio_caida>=15000.f){									\n\
+					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1166,7 +1218,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices9[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(sumatorio_caida>=15000.f){									\n\
+					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1178,7 +1235,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices10[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(sumatorio_caida>=15000.f){									\n\
+					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1190,7 +1252,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices11[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(sumatorio_caida>=15000.f){									\n\
+					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1202,7 +1269,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices12[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(sumatorio_caida>=15000.f){									\n\
+					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				//LAT4                                                              \n\
@@ -1213,7 +1285,12 @@ namespace OctahedronGreen {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices13[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(sumatorio_caida>=15000.f){									\n\
+					gl_PrimitiveID = 0;												\n\
+					}																\n\
+					else{															\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 			}"
@@ -1266,9 +1343,12 @@ namespace OctahedronGreen {
 		if (fall)
 		{
 			position.y -= -caida;
+			sumatorio_caida += -caida;
 		}
+		
 		caida -= 0.009;
 		glUniform4fv(glGetUniformLocation(myRenderProgram, "position"), 1, (GLfloat*)&position);
+		glUniform1fv(glGetUniformLocation(myRenderProgram, "sumatorio_caida"), 1, (GLfloat*)&sumatorio_caida);
 		glUniformMatrix4fv(glGetUniformLocation(myRenderProgram, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
 		glUniform1f(glGetUniformLocation(myRenderProgram, "time"), (GLfloat)currentTime);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
