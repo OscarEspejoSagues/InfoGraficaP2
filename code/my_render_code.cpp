@@ -178,19 +178,29 @@ namespace ShaderValues {
 	glm::vec4 pos15 = { 0.4f, 3.5f, 0.f,0 };
 	glm::vec4 pos16 = { -0.1f, 2.5f, 0.f,0 };
 	glm::vec4 pos17 = { -0.1f, 2.2f, 0.f,0 };
+	glm::vec4 pos18 = { 0.25,0.25,0,0 };
+	glm::vec4 pos19 = { -0.25,0.25,0,0 };
 }
 
 
-
-glm::vec4 Honey2 = { 2.3f, 2.2f, 1.f, 1.f };
-glm::vec4 Honey3 = { 0.15f, 2.2f, 1.f, 1.f };
-glm::vec4 Honey4 = { 2.3f, 0.05f, 1.f, 1.f };
-glm::vec4 Honey5 = { 0.15f, 0.05f, 1.f, 1.f };
-glm::vec4 Honey6 = { 2.3f, -2.2f, 1.f, 1.f };
-glm::vec4 Honey7 = { 0.15f, -2.2f, 1.f, 1.f };
-glm::vec4 Honey8 = { 4.3f, 2.2f, 1.f, 1.f };
-glm::vec4 Honey9 = { 4.3f, 0.05f, 1.f, 1.f };
-glm::vec4 Honey10 = { 4.3f, -2.2f, 1.f, 1.f };
+glm::vec4 Honey1 = { 0.f, 0.f, -15.f, 1.f };
+glm::vec4 Honey2 = { 1.7f, 0.f, -15.f, 1.f };
+glm::vec4 Honey3 = {-1.7f, 0.f, -15.f, 1.f };
+glm::vec4 Honey4 = { 1.7f, 1.4f, -15.f, 1.f };
+glm::vec4 Honey5 = { 0.f, 1.4f, -15.f, 1.f };
+glm::vec4 Honey6 = { -1.7f, 1.4f, -15.f, 1.f };
+glm::vec4 Honey7 = { 0.f, 2.8f, -15.f, 1.f };
+glm::vec4 Honey8 = { 1.7f, 2.8f, -15.f, 1.f };
+glm::vec4 Honey9 = { -1.7f, 2.8f, -15.f, 1.f };
+glm::vec4 Honey10 = { 0.f, 0.f, -13.f, 1.f };
+glm::vec4 Honey11 = { 1.7f, 0.f, -13.f, 1.f };
+glm::vec4 Honey12 = { -1.7f, 0.f, -13.f, 1.f };
+glm::vec4 Honey13 = { 1.7f, 1.4f, -13.f, 1.f };
+glm::vec4 Honey14 = { 0.f, 1.4f, -13.f, 1.f };
+glm::vec4 Honey15 = { -1.7f, 1.4f, -13.f, 1.f };
+glm::vec4 Honey16 = { 0.f, 2.8f, -13.f, 1.f };
+glm::vec4 Honey17 = { 1.7f, 2.8f, -13.f, 1.f };
+glm::vec4 Honey18 = { -1.7f, 2.8f, -13.f, 1.f };
 
 
 namespace RenderVars {
@@ -324,6 +334,34 @@ void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
 }
 
 
+void GLmousecb(MouseEvent ev) {
+	if (RV::prevMouse.waspressed && RV::prevMouse.button == ev.button) {
+		float diffx = ev.posx - RV::prevMouse.lastx;
+		float diffy = ev.posy - RV::prevMouse.lasty;
+		switch (ev.button) {
+		case MouseEvent::Button::Left: // ROTATE
+			RV::rota[0] += diffx * 0.005f;
+			RV::rota[1] += diffy * 0.005f;
+			break;
+		case MouseEvent::Button::Right: // MOVE XY
+			RV::panv[0] += diffx * 0.03f;
+			RV::panv[1] -= diffy * 0.03f;
+			break;
+		case MouseEvent::Button::Middle: // MOVE Z
+			RV::panv[2] += diffy * 0.05f;
+			break;
+		default: break;
+		}
+	}
+	else {
+		RV::prevMouse.button = ev.button;
+		RV::prevMouse.waspressed = true;
+	}
+	RV::prevMouse.lastx = ev.posx;
+	RV::prevMouse.lasty = ev.posy;
+}
+
+
 
 
 void myInitCode(int width, int height)
@@ -372,9 +410,12 @@ void myRenderCode(double currentTime)
 	{
 		float aux = 50.f;
 		RV::_projection = glm::ortho((float)-w / aux, (float)w / aux, (float)h / aux, (float)-h / aux, 0.1f, 100.f); //camara orthonormal
-		RV::_modelView = glm::rotate(glm::mat4(1.0f), 170.f, glm::vec3(1.f, 1.f, 0.f));//rotamos para tener una perspectiva 3D
 	}
-
+	if (drawwireframe)
+	{
+		float aux = 120.f;
+		RV::_projection = glm::ortho((float)-w / aux, (float)w / aux, (float)h / aux, (float)-h / aux, 0.1f, 100.f); //camara orthonormal
+	}
 
 	RV::_modelView = glm::rotate(RV::_modelView, RV::rota[1], glm::vec3(1.f, 0.f, 0.f));
 	RV::_modelView = glm::rotate(RV::_modelView, RV::rota[0], glm::vec3(0.f, 1.f, 0.f));
@@ -413,6 +454,7 @@ void myRenderCode(double currentTime)
 	}
 	if (drawwireframe)
 	{
+		WireframeOcta::myRenderCode(currentTime, Honey1);
 		WireframeOcta::myRenderCode(currentTime, Honey2);
 		WireframeOcta::myRenderCode(currentTime, Honey3);
 		WireframeOcta::myRenderCode(currentTime, Honey4);
@@ -422,6 +464,15 @@ void myRenderCode(double currentTime)
 		WireframeOcta::myRenderCode(currentTime, Honey8);
 		WireframeOcta::myRenderCode(currentTime, Honey9);
 		WireframeOcta::myRenderCode(currentTime, Honey10);
+		WireframeOcta::myRenderCode(currentTime, Honey11);
+		WireframeOcta::myRenderCode(currentTime, Honey12);
+		WireframeOcta::myRenderCode(currentTime, Honey13);
+		WireframeOcta::myRenderCode(currentTime, Honey14);
+		WireframeOcta::myRenderCode(currentTime, Honey15);
+		WireframeOcta::myRenderCode(currentTime, Honey16);
+		WireframeOcta::myRenderCode(currentTime, Honey17);
+		WireframeOcta::myRenderCode(currentTime, Honey18);
+
 	}
 	if (drawocta1)
 	{
@@ -481,8 +532,8 @@ void myRenderCode(double currentTime)
 		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos13, RotMatY, scale, falling);
 		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos14, RotMatYX, scale, falling);
 		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos15, RotMatYX, scale, falling);
-		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos16, RotMatX, scale, falling);
-		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos17, RotMatY, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos19, RotMatX, scale, falling);
+		OctahedronGreen::myRenderCode(currentTime, ShaderValues::pos18, RotMatY, scale, falling);
 
 		if (sumatorio_caida >= 250)
 		{
@@ -1378,7 +1429,6 @@ namespace OctahedronGreen {
 		{
 			position.y -= -caida;
 			sumatorio_caida += -caida;
-			std::cout << sumatorio_caida << std::endl;
 		}
 		
 		caida -= 0.0009;
@@ -1451,7 +1501,7 @@ namespace WireframeOcta {
 											vec4(0.65, 0.3, 0.3, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices[i]+position;			\n\
+					gl_Position = rot*(vertices[i]+position);			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1465,7 +1515,7 @@ namespace WireframeOcta {
 											vec4(-0.65, 0.3, 0.3, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices1[i]+position;			\n\
+					gl_Position = rot*(vertices1[i]+position);			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1479,7 +1529,7 @@ namespace WireframeOcta {
 											vec4(0.65, 0.3, -1, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices2[i]+position;			\n\
+					gl_Position = rot*(vertices2[i]+position);			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1494,7 +1544,7 @@ namespace WireframeOcta {
 											vec4(-0.3, 0.0, -1.2, 1.0));				\n\
 				for (int i = 0; i <7; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices3[i]+position;			\n\
+					gl_Position = rot*(vertices3[i]+position);			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1509,7 +1559,7 @@ namespace WireframeOcta {
 											vec4(-0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices4[i]+position;			\n\
+					gl_Position = rot*(vertices4[i]+position);			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1523,7 +1573,7 @@ namespace WireframeOcta {
 											vec4(-0.65, -0.3, 0.3, 1.0));			\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices5[i]+position;			\n\
+					gl_Position = rot*(vertices5[i]+position);			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1537,7 +1587,7 @@ namespace WireframeOcta {
 											vec4(0.65, -0.3, -1, 1.0));		        \n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices6[i]+position;			\n\
+					gl_Position = rot*(vertices6[i]+position);			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1551,7 +1601,7 @@ namespace WireframeOcta {
 											vec4(-0.65, -0.3, -1, 1.0));				\n\
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices7[i]+position;			\n\
+					gl_Position = rot*(vertices7[i]+position);			\n\
 					gl_PrimitiveID = 1;												\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1564,7 +1614,7 @@ namespace WireframeOcta {
 										vec4(0.3, 0.7, -0.7, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices8[i]+position;			\n\
+					gl_Position = rot*(vertices8[i]+position);			\n\
 					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1576,7 +1626,7 @@ namespace WireframeOcta {
 										vec4(-0.3, -0.7, -0.7, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices9[i]+position;			\n\
+					gl_Position = rot*(vertices9[i]+position);			\n\
 					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1588,7 +1638,7 @@ namespace WireframeOcta {
 										vec4(-0.3, 0.0, 0.6, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices10[i]+position;			\n\
+					gl_Position = rot*(vertices10[i]+position);			\n\
 					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1600,7 +1650,7 @@ namespace WireframeOcta {
 										vec4(0.9, 0.0, 0.0, 1.0));				\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices11[i]+position;			\n\
+					gl_Position = rot*(vertices11[i]+position);			\n\
 					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1612,7 +1662,7 @@ namespace WireframeOcta {
 										vec4(0.3, 0.0, -1.2, 1.0));					\n\
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices12[i]+position;			\n\
+					gl_Position = rot*(vertices12[i]+position);			\n\
 					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\
@@ -1623,7 +1673,7 @@ namespace WireframeOcta {
 										vec4(-0.9, 0.0, -0.7, 1.0));				\n\
 				for (int i = 0; i <3; i++)											\n\
 				{																	\n\
-					gl_Position = rot*vertices13[i]+position;			\n\
+					gl_Position = rot*(vertices13[i]+position);			\n\
 					gl_PrimitiveID = 1;											\n\
 					EmitVertex();													\n\
 				}																	\n\

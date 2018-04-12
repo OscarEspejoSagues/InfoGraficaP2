@@ -15,7 +15,7 @@ extern void myInitCode(int width, int height);
 extern void myCleanupCode();
 extern void myRenderCode(double currentTime);
 extern void myKeyController(SDL_Event eve);
-
+extern void GLmousecb(MouseEvent ev);
 
 
 
@@ -88,31 +88,38 @@ int main(int argc, char** argv) {
 	
 	// Setup ImGui binding
 	ImGui_ImplSdlGL3_Init(mainwindow);
-
-		bool quit_app = false;
-		while (!quit_app) {
-			SDL_Event eve;
-			while (SDL_PollEvent(&eve)) {
-				ImGui_ImplSdlGL3_ProcessEvent(&eve);
-				switch (eve.type) {
-				case SDL_WINDOWEVENT:
-					/*if (eve.window.event == SDL_WINDOWEVENT_RESIZED) {
-						GLResize(eve.window.data1, eve.window.data2);
-					}*/
-					break;
-				case SDL_QUIT:
-					quit_app = true;
-					break;
-				}
-				myKeyController(eve);
+	bool quit_app = false;
+	while (!quit_app) {
+		SDL_Event eve;
+		while (SDL_PollEvent(&eve)) {
+			ImGui_ImplSdlGL3_ProcessEvent(&eve);
+			switch (eve.type) {
+			case SDL_WINDOWEVENT:
+				//if (eve.window.event == SDL_WINDOWEVENT_RESIZED) {
+				//	GLResize(eve.window.data1, eve.window.data2);
+				//}
+				break;
+			case SDL_QUIT:
+				quit_app = true;
+				break;
 			}
-			ImGui_ImplSdlGL3_NewFrame(mainwindow);
+			myKeyController(eve);
+		}
+		ImGui_ImplSdlGL3_NewFrame(mainwindow);
 
-			ImGuiIO& io = ImGui::GetIO();
-			GUI();
+		ImGuiIO& io = ImGui::GetIO();
 
-			
 
+		GUI();
+		//PhysicsUpdate((float)expected_frametime);
+		if (!io.WantCaptureMouse) {
+			MouseEvent ev = { io.MousePos.x, io.MousePos.y,
+				(io.MouseDown[0] ? MouseEvent::Button::Left :
+				(io.MouseDown[1] ? MouseEvent::Button::Right :
+					(io.MouseDown[2] ? MouseEvent::Button::Middle :
+						MouseEvent::Button::None))) };
+			GLmousecb(ev);
+		}
 
 
 		double currentTime = (double)SDL_GetTicks() / 1000.0;
