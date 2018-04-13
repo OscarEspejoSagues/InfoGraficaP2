@@ -191,15 +191,28 @@ namespace ShaderValues {
 	glm::vec4 Honey7 = { 0.f, 15.8f, -15.f, 1.f };
 	glm::vec4 Honey8 = { 1.7f, 15.8f, -15.f, 1.f };
 	glm::vec4 Honey9 = { -1.7f, 15.8f, -15.f, 1.f };
-	glm::vec4 Honey10 = { 0.f, 13.f, -13.f, 1.f };
-	glm::vec4 Honey11 = { 1.7f, 13.f, -13.f, 1.f };
-	glm::vec4 Honey12 = { -1.7f, 13.f, -13.f, 1.f };
-	glm::vec4 Honey13 = { 1.7f, 14.4f, -13.f, 1.f };
-	glm::vec4 Honey14 = { 0.f, 14.4f, -13.f, 1.f };
-	glm::vec4 Honey15 = { -1.7f, 14.4f, -13.f, 1.f };
-	glm::vec4 Honey16 = { 0.f, 15.8f, -13.f, 1.f };
-	glm::vec4 Honey17 = { 1.7f, 15.8f, -13.f, 1.f };
-	glm::vec4 Honey18 = { -1.7f, 15.8f, -13.f, 1.f };
+	glm::vec4 Honey10 = { 0.f, 12.3f, -13.65f, 1.f };
+	glm::vec4 Honey11 = { 1.7f, 12.3f, -13.65f, 1.f };
+	glm::vec4 Honey12 = { -1.7f, 12.3f, -13.65f, 1.f };
+	glm::vec4 Honey13 = { 1.7f, 13.6f, -13.65f, 1.f };
+	glm::vec4 Honey14 = { 0.f, 13.6f, -13.65f, 1.f };
+	glm::vec4 Honey15 = { -1.7f, 13.6f, -13.65f, 1.f };
+	glm::vec4 Honey16 = { 0.f, 15.1f, -13.6f, 1.f };
+	glm::vec4 Honey17 = { 1.7f, 15.1f, -13.6f, 1.f };
+	glm::vec4 Honey18 = { -1.7f, 15.1f, -13.6f, 1.f };
+	glm::vec4 Honey19 = { 0.f, 16.56f, -13.6f, 1.f };
+	glm::vec4 Honey20 = { 1.7f, 16.56f, -13.6f, 1.f };
+	glm::vec4 Honey21 = { -1.7f, 16.56f, -13.6f, 1.f };
+
+	glm::vec4 Honey22 = { 0.f, 13.f, -12.3f, 1.f };
+	glm::vec4 Honey23 = { 1.7f, 13.f, -12.3f, 1.f };
+	glm::vec4 Honey24 = { -1.7f, 13.f, -12.3f, 1.f };
+	glm::vec4 Honey25 = { 1.7f, 14.4f, -12.3f, 1.f };
+	glm::vec4 Honey26 = { 0.f, 14.4f, -12.3f, 1.f };
+	glm::vec4 Honey27 = { -1.7f, 14.4f, -12.3f, 1.f };
+	glm::vec4 Honey28 = { 0.f, 15.8f, -12.3f, 1.f };
+	glm::vec4 Honey29 = { 1.7f, 15.8f, -12.3f, 1.f };
+	glm::vec4 Honey30 = { -1.7f, 15.8f, -12.3f, 1.f };
 
 	glm::vec4 falling01 = { 0.f, 0.f, -1.f, 1.f };
 	glm::vec4 falling02 = { 0.25f, 0.f, -0.1f, 1.f };
@@ -498,6 +511,18 @@ void myRenderCode(double currentTime)
 		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey16);
 		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey17);
 		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey18);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey19);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey20);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey21);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey22);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey23);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey24);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey25);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey26);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey27);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey28);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey29);
+		WireframeOcta::myRenderCode(currentTime, ShaderValues::Honey30);
 
 	}
 	if (drawocta1)
