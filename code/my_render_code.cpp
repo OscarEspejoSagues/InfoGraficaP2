@@ -883,7 +883,11 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices[i]+position;			\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
 					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -897,7 +901,11 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices1[i]+position;			\n\
-					gl_PrimitiveID = 2;												\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -911,7 +919,11 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices2[i]+position;			\n\
-					gl_PrimitiveID = 3;												\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -925,7 +937,11 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices3[i]+position;			\n\
-					gl_PrimitiveID = 4;												\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -940,7 +956,11 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices4[i]+position;			\n\
-					gl_PrimitiveID = 5;												\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -954,7 +974,11 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices5[i]+position;			\n\
-					gl_PrimitiveID = 6;												\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -968,7 +992,11 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices6[i]+position;			\n\
-					gl_PrimitiveID = 7;												\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -982,7 +1010,11 @@ namespace Octahedron {
 				for (int i = 0; i <6; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices7[i]+position;			\n\
-					gl_PrimitiveID = 8;												\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -995,7 +1027,11 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices8[i]+position;			\n\
-					gl_PrimitiveID = 9;											\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1007,7 +1043,11 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices9[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1019,7 +1059,11 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices10[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1031,7 +1075,11 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices11[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1043,7 +1091,11 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices12[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
@@ -1055,7 +1107,11 @@ namespace Octahedron {
 				for (int i = 0; i <4; i++)											\n\
 				{																	\n\
 					gl_Position = rot*RotMat*scale*vertices13[i]+position;			\n\
-					gl_PrimitiveID = 10;											\n\
+					if(position.y<=-1.4){											\n\
+					gl_PrimitiveID=9;												\n\
+					}else{																\n\
+					gl_PrimitiveID = 1;												\n\
+					}																\n\
 					EmitVertex();													\n\
 				}																	\n\
 				EndPrimitive();														\n\
