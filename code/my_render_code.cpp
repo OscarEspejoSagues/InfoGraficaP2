@@ -13,6 +13,7 @@
 
 int w, h; //variables donde guardamos la witdh y la height
 
+//Conjunto de matrices de transformaciones para los octaedros
 glm::mat4 RotMatX;
 glm::mat4 RotMatY;
 glm::mat4 RotMatZ;
@@ -21,6 +22,7 @@ glm::mat4 RotMatYZ;
 glm::mat4 RotMatYX;
 glm::mat4 scale;
 
+//Conjunto de matrices de transformaciones para los cubos
 glm::mat4 RotMatXCube;
 glm::mat4 RotMatYCube;
 glm::mat4 RotMatZCube;
@@ -29,25 +31,29 @@ glm::mat4 RotMatYZCube;
 glm::mat4 RotMatYXCube;
 glm::mat4 scaleCube;
 
+//Matriz de identidad
 glm::mat4 Identity = { 1.f, 0.f, 0.f, 0.f,
 0.0f, 1.f, 0.f, 0.f,
 0.0f, 0.f, 1.f, 0.f,
 0.0f, 0.f, 0.f, 1.f,
 };
-
+//variables de control de velocidad
 glm::vec4 RandomPositionsArray[ARRAY_SIZE];
 float caida = 0.1f;
 float sumatorio_caida = 0.f;
 
+//funciones para inicializar las matrices de transformacion 
 void InitMatsFall(double currentTime, bool fall);
 void InitMatsFallCube(double currentTime, bool fall);
 
+//boleanos de control para las escenas
 bool staticube = false;
 bool staticocto = false;
 bool falling = false;
 bool fallingCube = false;
 bool honeycombwireframe = false;
 
+//variables de control de elementos renderizados
 bool drawcube1 = false;
 bool drawcube2 = false;
 bool drawwireframe = false;
@@ -64,7 +70,7 @@ bool contratransition = false;
 
 bool greencolor;
 
-///////// fw decl
+//Funcion para generar posiciones aleatorias en el ejercicio 1
 
 glm::vec4 RandomPos()
 {
@@ -95,7 +101,7 @@ namespace Axis {
 	void drawAxis();
 }
 
-//Dentro del namespace de cube tenemos nustras fuciones que nos permiten dibujar cuadrados
+//Definicion de todos los namespace de los shaders a usar
 namespace Cube {
 	void setupCube();
 	void cleanupCube();
@@ -150,6 +156,7 @@ namespace WireframeOcta {
 	GLuint myVAO;
 }
 
+//Namespace que contiene todas las posiciones de los shaders
 namespace ShaderValues {
 	glm::vec4 position = { 0.f, 5.f, 0.f, 0.f };
 	glm::vec4 position1 = { 0.f, 3.f,2.f, 1.f };
@@ -456,7 +463,7 @@ void myRenderCode(double currentTime)
 	RV::_modelView = glm::translate(RV::_modelView, glm::vec3(RV::panv[0], RV::panv[1], RV::panv[2]));
 
 	RV::_projection = glm::perspective(RV::FOV, (float)w / (float)h, RV::zNear, RV::zFar);//si no es la escena 1 tenemos vision en perspectiva
-	if (drawcube2 || drawocta2 || drawoctagreen)
+	if (drawcube2 || drawocta2 || drawoctagreen)//controlamos que este en vision orthonormal
 	{
 		float aux = 50.f;
 		RV::_projection = glm::ortho((float)-w / aux, (float)w / aux, (float)h / aux, (float)-h / aux, 0.1f, 100.f); //camara orthonormal
@@ -466,7 +473,7 @@ void myRenderCode(double currentTime)
 		float aux = 120.f;
 		RV::_projection = glm::ortho((float)-w / aux, (float)w / aux, (float)h / aux, (float)-h / aux, 0.1f, 100.f); //camara orthonormal
 	}
-	if (transition)
+	if (transition) //control de la traslacion de la camara
 	{
 		RV::rota[0] += 0.08;
 		RV::panv[0] += 0.08;
@@ -490,7 +497,7 @@ void myRenderCode(double currentTime)
 
 	RV::_MVP = RV::_projection * RV::_modelView;
 
-
+	//Cuando pulsemos las teclas renderizamos segun que objetos, aqui llamamos a todos los renders de los objetos a dibujar
 
 	if (drawcube1)
 	{
@@ -677,6 +684,7 @@ void linkProgram(GLuint program) {
 	}
 }
 
+//Sahder para dibujar cubos
 namespace MyFirstShader {
 	void myCleanupCode() {
 		glDeleteVertexArrays(1, &myVAO);
@@ -870,6 +878,7 @@ namespace MyFirstShader {
 	}
 }
 
+//Shader para dibujar octaedros
 namespace Octahedron {
 	void myCleanupCode() {
 		glDeleteVertexArrays(1, &myVAO);
@@ -1173,6 +1182,7 @@ namespace Octahedron {
 	}
 }
 
+//Shader para dibujar octaedros con el efecto MATRIX
 namespace OctahedronGreen {
 	void myCleanupCode() {
 		glDeleteVertexArrays(1, &myVAO);
@@ -1697,8 +1707,7 @@ namespace OctahedronGreen {
 	}
 }
 
-
-
+//Shader para dibujar octaedros wireframe
 namespace WireframeOcta {
 	void myCleanupCode() {
 		glDeleteVertexArrays(1, &myVAO);
@@ -2336,6 +2345,7 @@ void main() {\n\
 	}
 }
 
+//Funcion  que genera la rotacion de los elementos cuando la deseemos
 void InitMatsFall(double currentTime, bool fall) {
 	if (fall)
 	{
