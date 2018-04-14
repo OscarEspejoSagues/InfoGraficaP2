@@ -1,4 +1,6 @@
 #include <GL\glew.h>
+#include <imgui\imgui.h>
+#include <imgui\imgui_impl_sdl_gl3.h>
 #include <glm\gtc\type_ptr.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <cstdio>
@@ -263,6 +265,130 @@ namespace RenderVars {
 	float rota[2] = { 0.f, 0.f };
 }
 namespace RV = RenderVars;
+
+void GUI() {
+	bool show = true;
+	ImGui::Begin("Simulation Parameters", &show, 0);
+
+	// Do your GUI code here....
+	{
+		ImGui::Text("AA2. Geometry shaders");//FrameRate
+		if (ImGui::Checkbox("Ex1", &drawcube1)) {
+			FillArrayPos();
+			vel6 = false;
+			falling = false;
+			fallingCube = false;
+			honeycombwireframe = false;
+			staticocto = false;
+
+			drawcube1 = true;
+			drawcube2 = false;
+			drawwireframe = false;
+			drawocta1 = false;
+			drawocta2 = false;
+			drawoctagreen = false;
+			part6 = false;
+
+			caida = 0.1f;
+		}
+		if (ImGui::Checkbox("Ex2", &drawocta1))
+		{
+			vel6 = false;
+			falling = false;
+			fallingCube = false;
+			honeycombwireframe = false;
+			staticocto = false;
+
+			drawcube1 = false;
+			drawcube2 = false;
+			drawwireframe = false;
+			drawocta1 = true;
+			drawocta2 = false;
+			drawoctagreen = false;
+			part6 = false;
+
+			caida = 0.1f;
+		}
+		if (ImGui::Checkbox("Ex3", &drawcube2))
+		{
+			vel6 = false;
+			falling = false;
+			fallingCube = true;
+			honeycombwireframe = false;
+			staticocto = false;
+
+			drawcube1 = false;
+			drawcube2 = true;
+			drawwireframe = false;
+			drawocta1 = false;
+			drawocta2 = false;
+			drawoctagreen = false;
+			part6 = false;
+
+			caida = 0.1f;
+		}
+		if (ImGui::Checkbox("Ex4", &drawocta2))
+		{
+			FillArrayPos();
+			vel6 = false;
+			falling = true;
+			fallingCube = false;
+			honeycombwireframe = false;
+			staticocto = false;
+
+			drawcube1 = false;
+			drawcube2 = false;
+			drawwireframe = false;
+			drawocta1 = false;
+			drawocta2 = true;
+			drawoctagreen = false;
+			part6 = false;
+
+			caida = 0.1f;
+		}
+		if (ImGui::Checkbox("Ex5", &drawoctagreen))
+		{
+			FillArrayPos();
+			vel6 = false;
+			falling = true;
+			fallingCube = false;
+			honeycombwireframe = false;
+			staticocto = false;
+			drawcube1 = false;
+			drawcube2 = false;
+			drawwireframe = false;
+			drawocta1 = false;
+			drawocta2 = false;
+			drawoctagreen = true;
+			part6 = false;
+			sumatorio_caida = 0.f;
+			caida = 0.1f;
+		}
+		if (ImGui::Checkbox("Ex6", &drawwireframe))
+		{
+			falling = true;
+			fallingCube = false;
+			honeycombwireframe = true;
+			staticocto = true;
+			vel6 = true;
+
+			drawcube1 = false;
+			drawcube2 = false;
+			drawocta1 = false;
+			drawocta2 = false;
+			drawwireframe = true;
+			drawoctagreen = false;
+			part6 = true;
+			sumatorio_caida = 0.f;
+			caida = 0.1f;
+		}
+		ImGui::Checkbox("Ex6 C)", &transition);
+		ImGui::Checkbox("Initial State", &contratransition);
+	}
+	// .........................
+
+	ImGui::End();
+}
 
 //Funcion que nos permite controlar los eventos de teclado, la llamamos en el MAIN
 void myKeyController(SDL_Event eve) {//pasamos como parametro un evento SDL
